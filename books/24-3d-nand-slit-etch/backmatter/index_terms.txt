@@ -1,0 +1,44 @@
+Aspect ratio|aspect ratio
+ARDE|ARDE
+Amorphous carbon|amorphous carbon|a-C
+Bias, low-frequency|low-frequency|bias power
+Block|block
+Bowing|bowing
+Channel hole|channel hole
+Charging|charging
+Clausing factor|Clausing
+Cosine law|cosine
+Cryogenic etch|cryogenic|cryo
+Dummy channel|dummy channel
+Endpoint detection|endpoint
+Etch stop|etch stop|etch-stop
+Fluorocarbon|fluorocarbon
+Free-molecular flow|free-molecular|Knudsen
+Gate replacement|gate replacement|gate-replacement
+Hard mask|hard mask
+Hydrofluorocarbon|hydrofluorocarbon
+Ion angular distribution|angular distribution|angular spread
+Ion energy|ion energy
+Landing|landing
+Mask selectivity|selectivity
+Mean free path|mean free path
+Metrology|metrology
+Monte Carlo|Monte Carlo
+Neutral transport|neutral transport|transmission probability
+Nitride removal|nitride removal|phosphoric
+Notching|notching
+Oxygen|oxygen
+Passivation|passivation
+Polymer|polymer
+Pulsed plasma|pulsing|pulsed
+Scalloping|scalloping
+Sheath|sheath
+Source line|source line|source-line
+Sticking coefficient|sticking
+Tilt|tilt
+Tier|tier
+Time-multiplexed etch|cyclic|time-multiplexed
+Tungsten|tungsten
+Wafer bonding|wafer bonding|bonded
+Wiggling|wiggling|wiggle
+X-ray metrology|X-ray|CD-SAXS

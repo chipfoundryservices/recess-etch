@@ -1,0 +1,1062 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>3D NAND Slit Etch</title><meta name="viewport" content="width=device-width,initial-scale=1"><style>body{font:17px/1.6 Georgia,serif;max-width:46em;margin:2em auto;padding:0 1em;color:#222}
+h1{border-bottom:2px solid #333;padding-bottom:.2em;margin-top:2.5em}h2{margin-top:1.8em}
+table{border-collapse:collapse;margin:1em 0;font:14px sans-serif}td,th{border:1px solid #bbb;padding:3px 8px;text-align:right}
+th{background:#eee}td:first-child,th:first-child{text-align:left}blockquote{border-left:4px solid #999;margin:1em 0;padding:.2em 1em;color:#444}
+code,pre{background:#f3f3f3;font-size:14px}pre{padding:.7em;overflow-x:auto}figure{margin:1.5em 0}figure svg{width:100%;height:auto}
+figcaption{font:14px sans-serif;color:#444}.part{font:700 1.1em sans-serif;text-transform:uppercase;letter-spacing:.1em;margin-top:4em;color:#555}</style></head><body><section id="front"><h1>3D NAND Slit Etch</h1>
+<h3>Transport, Chemistry and Control of the Deepest Trench in the Memory Stack</h3>
+<p><em>Book 24 · recess-etch series</em></p>
+<hr />
+<h2>Preface</h2>
+<p>The slit is the least glamorous deep etch in 3D NAND and one of the hardest. It carries no memory cell, yet every block, every word line and every source contact depends on it being straight, clean, and landed.</p>
+<p>This book is organised in four parts and sixteen chapters, with seven appendices, a glossary and an index.</p>
+<p><strong>Part I — Foundations</strong> (Chapters 1–4): the device, the flow, the plasma basics, and a computed treatment of neutral transport in slots versus holes.</p>
+<p><strong>Part II — Slit Etch Physics</strong> (Chapters 5–8): ions and charging, chemistry, profile evolution and control.</p>
+<p><strong>Part III — Process Integration</strong> (Chapters 9–12): hard mask, reactor knobs, landing, and the gate-replacement steps that follow.</p>
+<p><strong>Part IV — Measurement, Control and Outlook</strong> (Chapters 13–16): metrology, modelling, yield, and the road ahead.</p>
+<h3>How the numbers were made</h3>
+<p>Transport numbers in Chapter 4 and Appendix B come from a Monte Carlo simulation (<code>sim/transport_mc.py</code>), validated against Clausing's values for circular tubes. Everything else quantitative (process windows, dimensions) is <em>illustrative</em>, to show orders of magnitude and relationships; none of it describes a specific manufacturer's process. References are listed in Appendix G; readers should check citation details against the originals.</p></section><h1>Contents</h1><ul><li><a href="#front">Preface</a></li><li><b>Part I — Foundations</b></li><li><a href="#ch01">Chapter 1 — Why 3D NAND Needs a Slit</a></li><li><a href="#ch02">Chapter 2 — Stack Architecture and the Gate-Replacement Flow</a></li><li><a href="#ch03">Chapter 3 — Plasma Etch Fundamentals for High-Aspect-Ratio Features</a></li><li><a href="#ch04">Chapter 4 — Neutral Transport in Slots Versus Holes</a></li><li><b>Part II — Slit Etch Physics</b></li><li><a href="#ch05">Chapter 5 — Ion Transport, Angular Distributions and Charging</a></li><li><a href="#ch06">Chapter 6 — Chemistry for the Oxide–Nitride Stack</a></li><li><a href="#ch07">Chapter 7 — Etch-Front Evolution, ARDE and Failure Modes</a></li><li><a href="#ch08">Chapter 8 — Profile Control: Taper, CD, Wiggling and Collapse</a></li><li><b>Part III — Process Integration</b></li><li><a href="#ch09">Chapter 9 — Hard Mask Engineering</a></li><li><a href="#ch10">Chapter 10 — Bias, Pulsing, Temperature and Reactor Design</a></li><li><a href="#ch11">Chapter 11 — Slit Landing: Source Line and Bottom Contact</a></li><li><a href="#ch12">Chapter 12 — Gate Replacement and Downstream Compatibility</a></li><li><b>Part IV — Measurement, Control and Outlook</b></li><li><a href="#ch13">Chapter 13 — Metrology and Inspection</a></li><li><a href="#ch14">Chapter 14 — Modelling and Simulation</a></li><li><a href="#ch15">Chapter 15 — Process Control, Defects and Yield</a></li><li><a href="#ch16">Chapter 16 — The Road Ahead</a></li><li><a href="#appA">Appendix A — The Monte Carlo Method</a></li><li><a href="#appB">Appendix B — Computed Transmission Tables</a></li><li><a href="#appC">Appendix C — Constants, Units and Useful Conversions</a></li><li><a href="#appD">Appendix D — Representative Process Windows</a></li><li><a href="#appE">Appendix E — Short Derivations</a></li><li><a href="#appF">Appendix F — Worked Problems</a></li><li><a href="#appG">Appendix G — Further Reading</a></li><li><a href="#glossary">Glossary</a></li><li><a href="#index">Index</a></li></ul><div class="part">Part I — Foundations</div><section id="ch01"><h1>Chapter 1 — Why 3D NAND Needs a Slit</h1>
+<h2>1.1 From planar to vertical</h2>
+<p>Planar NAND flash scaled by shrinking the floating-gate cell until electrons-per-cell and cell-to-cell coupling made further shrinking unprofitable. The industry's answer, first published as BiCS (Tanaka et al., VLSI Symposium, 2007) and followed by TCAT/V-NAND variants, was to stop shrinking in the plane and build <em>up</em>: a stack of alternating films is deposited, and strings of cells are formed by etching a vertical <strong>channel hole</strong> through the whole stack and lining it with charge-trap film and polysilicon.</p>
+<p>Stacking changes what the etch tool is asked to do. Bit density now scales with the number of layers, so each generation deepens the stack. The channel hole and the slit are both <strong>high-aspect-ratio (HAR)</strong> features, and they get harder in step with every added layer pair.</p>
+<h2>1.2 What the slit is for</h2>
+<p>Most production flows use a <strong>gate-replacement</strong> (replacement-metal-gate-like) scheme. The stack is deposited as alternating oxide and sacrificial nitride. After the channel holes are made and filled, the nitride must be <em>removed</em> and replaced by tungsten word lines. To reach the nitride, a wet etchant (typically hot phosphoric acid) has to enter the stack from the side. The <strong>slit</strong> is a long, narrow trench etched through the entire stack to give the etchant, and later the tungsten precursors, that access.</p>
+<p>The slit has second jobs as well:</p>
+<ul>
+<li>it divides the array into <strong>blocks</strong>, the erase unit of the device;</li>
+<li>after word-line formation it is filled with dielectric (often with a conductive source-line contact inside) to isolate neighbouring blocks;</li>
+<li>it provides the path for the stress relief and by-product removal during gate replacement.</li>
+</ul>
+<h2>1.3 Why a slit is not just a long hole</h2>
+<p>A slit has the same depth as a channel hole but is <em>long</em> in one direction. Geometrically it is the limit of an ellipse stretched without bound. Three consequences run through this entire book:</p>
+<ol>
+<li><strong>Neutral transport is better in a slit</strong> than in a hole of the same width and depth. Chapter 4 quantifies this with a Monte Carlo simulation: at an aspect ratio of 100 the slit passes about 3.6 times the free-molecular flux of a circular hole.</li>
+<li><strong>Mechanical behaviour is worse.</strong> A long, thin, tall wall of stack material has no lateral support from the neighbouring channel pillars and can bend, twist, or <em>wiggle</em> (Chapter 8).</li>
+<li><strong>Landing is a line, not a point.</strong> The bottom of the slit must stop on, or just into, a source-line structure along its whole length, so non-uniformity along the slit becomes a yield issue (Chapter 11).</li>
+</ol>
+<h2>1.4 Reading guide</h2>
+<p>The book has four parts. <strong>Part I</strong> sets up the device and the physics of transport. <strong>Part II</strong> is the etch itself: ions, chemistry, and how profiles go wrong. <strong>Part III</strong> integrates the etch with its neighbouring steps. <strong>Part IV</strong> covers measurement, modelling, control and the road ahead.</p>
+<blockquote>
+<p><strong>A note on numbers.</strong> Process values quoted in this book (gas flows, powers, temperatures, critical dimensions, layer counts) are <em>representative and illustrative</em>. They are chosen to show relationships and orders of magnitude and do not describe any manufacturer's process. The transport numbers in Chapter 4 and Appendix B are different: they are computed by the simulation shipped in this repository (<code>sim/transport_mc.py</code>) and can be reproduced exactly.</p>
+</blockquote></section><section id="ch02"><h1>Chapter 2 — Stack Architecture and the Gate-Replacement Flow</h1>
+<h2>2.1 The film stack</h2>
+<p>From the bottom up, a representative 3D NAND stack contains:</p>
+<table>
+<thead>
+<tr>
+<th>Region</th>
+<th>Typical content</th>
+<th>Etch relevance</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Substrate / periphery</td>
+<td>Si with CMOS logic (or bonded to a separate array wafer)</td>
+<td>Must not be damaged by plasma</td>
+</tr>
+<tr>
+<td>Source line</td>
+<td>Doped poly-Si, sometimes with a sacrificial layer</td>
+<td>Slit landing target</td>
+</tr>
+<tr>
+<td>Lower select gate</td>
+<td>Oxide / nitride or poly</td>
+<td>Different etch rate from main stack</td>
+</tr>
+<tr>
+<td>Memory stack</td>
+<td>N pairs of SiO₂ (≈ 25–35 nm) and SiN (≈ 25–35 nm)</td>
+<td>The bulk of the etch</td>
+</tr>
+<tr>
+<td>Upper select gate</td>
+<td>Oxide / nitride</td>
+<td>Transition layer</td>
+</tr>
+<tr>
+<td>Cap and hard mask</td>
+<td>Oxide cap, carbon-based mask</td>
+<td>Sets selectivity budget</td>
+</tr>
+</tbody>
+</table>
+<p>Each oxide–nitride pair is one <strong>tier</strong>. With a pair thickness near 60 nm, 200 pairs is roughly 12 µm; real stacks are often built from two or more decks to keep each etch manageable (Chapter 16).</p>
+<h2>2.2 Flow in outline</h2>
+<ol>
+<li><strong>Deposit</strong> the alternating stack and the cap.</li>
+<li><strong>Staircase</strong> formation at the array edge so that each word line can be contacted (repeated trim-and-etch).</li>
+<li><strong>Channel-hole etch</strong>: the first extreme-AR etch.</li>
+<li><strong>Memory film and channel deposition</strong>: blocking oxide, charge-trap nitride, tunnel oxide, poly-Si, core fill.</li>
+<li><strong>Slit etch</strong>: the subject of this book.</li>
+<li><strong>Nitride removal</strong> through the slit by wet etch, leaving air gaps between oxide layers.</li>
+<li><strong>Word-line formation</strong>: high-k blocking layer, barrier, tungsten fill through the slit.</li>
+<li><strong>Slit fill / isolation</strong> and source-line contact.</li>
+<li><strong>Contact and metal</strong> layers.</li>
+</ol>
+<h2>2.3 Why the slit comes after the channel holes</h2>
+<p>If the slit were etched first, channel-hole patterning would have to cross a topography of tall free-standing walls. Etching the holes first gives mechanical anchoring: the filled channel pillars tie the stack together, which is exactly what keeps the slit walls from collapsing <em>during the later wet steps</em>. It also means the slit etch must run on a stack that is already full of dissimilar materials at the pillar locations, a point that matters for sidewall passivation and charging (Chapters 5 and 6).</p>
+<h2>2.4 Slit layout</h2>
+<p>Slits run through the array at a pitch of a few micrometres, defining <strong>blocks</strong> between them. Inside a block, rows of channel holes run parallel to the slit. The minimum distance from slit sidewall to the nearest channel hole is a design rule that exists <em>because of</em> slit profile variation: bowing and tilt eat into it. Typical slit openings are of order 100 nm with taper that makes the bottom narrower than the top.</p>
+<h2>2.5 What the slit etch must achieve</h2>
+<p>A convenient summary is the "five Ts":</p>
+<ul>
+<li><strong>Through</strong>: clear the entire stack along the full slit length, all the way across the wafer.</li>
+<li><strong>Taper</strong>: keep a controlled, small sidewall angle.</li>
+<li><strong>Targeted landing</strong>: stop on, or a defined distance into, the source structure.</li>
+<li><strong>Twist-free</strong>: no twisting, wiggling or tilt that varies along the slit.</li>
+<li><strong>Tidy</strong>: no residue, no mask damage that propagates to later steps.</li>
+</ul>
+<p>The rest of the book unpacks how each is achieved and how each fails.</p></section><section id="ch03"><h1>Chapter 3 — Plasma Etch Fundamentals for High-Aspect-Ratio Features</h1>
+<h2>3.1 The four-component model</h2>
+<p>Reactive-ion etching of dielectrics is usually described with the <strong>ion-neutral synergy</strong> model of Coburn and Winters (J. Appl. Phys. 50, 3189, 1979): neither energetic ions nor reactive neutrals alone etch efficiently; the combination does. For fluorocarbon etching of oxide and nitride, four species matter:</p>
+<ul>
+<li><strong>Etchant neutrals</strong> (F, O) that attack the surface chemically;</li>
+<li><strong>Polymer precursors</strong> (CFₓ, CₓFᵧ radicals) that deposit a thin fluorocarbon film;</li>
+<li><strong>Energetic ions</strong> (CFₓ⁺, Ar⁺, O₂⁺) that supply energy for etching through that film;</li>
+<li><strong>Inhibitors</strong>, in the sense of the film itself, which protects surfaces that ions do not strike.</li>
+</ul>
+<h2>3.2 The flux budget in a narrow feature</h2>
+<p>The surface at the <em>bottom</em> of a HAR feature sees a flux of each species reduced relative to the flux at the mouth. For each species:</p>
+<ul>
+<li><strong>Neutrals</strong> arrive with an isotropic (cosine-like) angular distribution, travel in straight lines, and are reflected or consumed at the walls. Their flux at the bottom falls roughly as 1/AR for non-reactive species and much faster once the walls consume them (Chapter 4).</li>
+<li><strong>Ions</strong> arrive nearly vertically, because the sheath accelerates them along the normal. Their loss at the walls comes from angular spread and charging-induced deflection (Chapter 5).</li>
+</ul>
+<p>The ratio of ion flux to neutral flux at the bottom therefore <strong>rises</strong> with depth. This is the origin of several HAR behaviours: the etch becomes more ion-limited and less chemical, and polymer thickness at the bottom shrinks.</p>
+<h2>3.3 Ion energy and the sheath</h2>
+<p>The sheath voltage sets the ion energy. Two knobs matter:</p>
+<ul>
+<li><strong>Source power</strong> (typically RF at a few MHz to tens of MHz, or microwave) controls plasma density, hence ion flux;</li>
+<li><strong>Bias power</strong> at a low frequency (hundreds of kHz to a few MHz) controls ion energy and its distribution.</li>
+</ul>
+<p>Low bias frequency is important because ions respond to the instantaneous sheath voltage, giving a <strong>wide bimodal energy distribution</strong> with a high-energy peak. High-energy ions have narrower angular spread, which is what HAR etches want. The trade-off is mask erosion and substrate damage.</p>
+<h2>3.4 Aspect-ratio-dependent etching (ARDE)</h2>
+<p>ARDE is the observation that deeper or narrower features etch more slowly. Gottscho and co-workers (J. Vac. Sci. Technol. B 10, 2133, 1992) categorised the mechanisms: Knudsen transport of neutrals, ion shadowing, differential charging, and neutral shadowing. In a slit the dominant contributors are (i) neutral starvation of etchant, (ii) a polymer-clogging effect that is <em>opposite</em> in sign, and (iii) charging. The measured etch rate versus depth is the product of all three.</p>
+<h2>3.5 The "etch-stop" regime</h2>
+<p>If the passivating-polymer flux at the bottom exceeds the ion-driven removal rate, the feature stops etching altogether. This is an aspect-ratio-dependent <strong>etch stop</strong>. It sets an upper bound on the achievable depth for a given chemistry and motivates higher ion energies, pulsing, oxygen addition and low temperature (Chapters 6 and 10).</p>
+<h2>3.6 Selectivity in alternating stacks</h2>
+<p>The stack contains SiO₂ and Si₃N₄, and the mask is carbon. The oxide-to-nitride etch-rate ratio should be close to 1, to avoid <strong>scalloping</strong> of the walls where the two materials meet. At the same time the etch rate of mask must be several times lower than that of the stack. The chemistry in Chapter 6 is designed around these two opposing constraints.</p></section><section id="ch04"><h1>Chapter 4 — Neutral Transport in Slots Versus Holes</h1>
+<p>This chapter replaces rules of thumb with computed numbers. The Monte Carlo code lives in <code>sim/transport_mc.py</code>; method details are in Appendix A and the full results table in Appendix B.</p>
+<h2>4.1 Free-molecular flow</h2>
+<p>At etch pressures of a few to tens of mTorr the mean free path of a neutral (centimetres to tens of centimetres) is enormously larger than the feature size (≈ 0.1 µm). Gas-phase collisions inside the feature are negligible and transport is <strong>ballistic with surface reflections</strong>: the Knudsen regime. The first-order question is the <strong>transmission probability</strong> W, the fraction of molecules entering the mouth that reach the bottom.</p>
+<p>For a circular tube of length L and diameter D, W is the classical <strong>Clausing factor</strong> (Clausing, 1932). For long tubes W → 4D/(3L). For an infinite slit of width w and depth L, W is larger, with a logarithmic correction, because molecules can travel along the free direction without hitting a wall.</p>
+<h2>4.2 The simulation</h2>
+<p>We model:</p>
+<ul>
+<li><strong>Slot</strong>: infinite along y, width 1 (all lengths in units of the opening), depth AR;</li>
+<li><strong>Hole</strong>: circular, diameter 1, depth AR;</li>
+<li>cosine-law entry at the top; <strong>diffuse (cosine-law) re-emission</strong> at every wall hit;</li>
+<li>a <strong>sticking coefficient s</strong>: probability that a molecule is lost at a wall hit (s = 0 is a pure transport problem; s &gt; 0 models radical consumption).</li>
+</ul>
+<p>The hole result at s = 0 was checked against Clausing's tabulated values before any slot numbers were used: the simulated transmissions at L/D = 0.5, 1, 2 and 5 are 0.6715, 0.5156, 0.3563 and 0.1909 against the published 0.6720, 0.5136, 0.3589 and 0.1910.</p>
+<h2>4.3 Results, non-reactive species (s = 0)</h2>
+<table><thead><tr><th>AR</th><th>W slot</th><th>W hole</th><th>slot/hole</th><th>W·AR slot</th><th>W·AR hole</th></tr></thead><tbody><tr><td>1</td><td>0.6836</td><td>0.5134</td><td>1.33</td><td>0.68</td><td>0.51</td></tr><tr><td>2</td><td>0.5420</td><td>0.3566</td><td>1.52</td><td>1.08</td><td>0.71</td></tr><tr><td>5</td><td>0.3562</td><td>0.1912</td><td>1.86</td><td>1.78</td><td>0.96</td></tr><tr><td>10</td><td>0.2405</td><td>0.1094</td><td>2.20</td><td>2.40</td><td>1.09</td></tr><tr><td>20</td><td>0.1538</td><td>0.0597</td><td>2.58</td><td>3.08</td><td>1.19</td></tr><tr><td>40</td><td>0.0953</td><td>0.0314</td><td>3.03</td><td>3.81</td><td>1.26</td></tr><tr><td>60</td><td>0.0694</td><td>0.0213</td><td>3.26</td><td>4.16</td><td>1.28</td></tr><tr><td>80</td><td>0.0551</td><td>0.0157</td><td>3.52</td><td>4.41</td><td>1.25</td></tr><tr><td>100</td><td>0.0468</td><td>0.0129</td><td>3.62</td><td>4.68</td><td>1.29</td></tr><tr><td>150</td><td>0.0346</td><td>0.0085</td><td>4.08</td><td>5.19</td><td>1.27</td></tr></tbody></table>
+
+<figure><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 620 380" font-family="sans-serif" font-size="12">
+<rect width="620" height="380" fill="white"/>
+<text x="310.0" y="18" text-anchor="middle" font-weight="bold">Transmission vs aspect ratio</text>
+<line x1="70" x2="600" y1="325.0" y2="325.0" stroke="#ddd"/><text x="64" y="329.0" text-anchor="end">1e-3</text>
+<line x1="70" x2="600" y1="226.66666666666666" y2="226.66666666666666" stroke="#ddd"/><text x="64" y="230.66666666666666" text-anchor="end">1e-2</text>
+<line x1="70" x2="600" y1="128.33333333333331" y2="128.33333333333331" stroke="#ddd"/><text x="64" y="132.33333333333331" text-anchor="end">1e-1</text>
+<line x1="70" x2="600" y1="30.0" y2="30.0" stroke="#ddd"/><text x="64" y="34.0" text-anchor="end">1e0</text>
+<line x1="70.0" x2="70.0" y1="30" y2="325" stroke="#eee"/><text x="70.0" y="341" text-anchor="middle">1</text>
+<line x1="143.3176501849216" x2="143.3176501849216" y1="30" y2="325" stroke="#eee"/><text x="143.3176501849216" y="341" text-anchor="middle">2</text>
+<line x1="240.23831181549306" x2="240.23831181549306" y1="30" y2="325" stroke="#eee"/><text x="240.23831181549306" y="341" text-anchor="middle">5</text>
+<line x1="313.55596200041464" x2="313.55596200041464" y1="30" y2="325" stroke="#eee"/><text x="313.55596200041464" y="341" text-anchor="middle">10</text>
+<line x1="386.87361218533624" x2="386.87361218533624" y1="30" y2="325" stroke="#eee"/><text x="386.87361218533624" y="341" text-anchor="middle">20</text>
+<line x1="460.19126237025785" x2="460.19126237025785" y1="30" y2="325" stroke="#eee"/><text x="460.19126237025785" y="341" text-anchor="middle">40</text>
+<line x1="557.1119240008293" x2="557.1119240008293" y1="30" y2="325" stroke="#eee"/><text x="557.1119240008293" y="341" text-anchor="middle">100</text>
+<line x1="600.0" x2="600.0" y1="30" y2="325" stroke="#eee"/><text x="600.0" y="341" text-anchor="middle">150</text>
+<rect x="70" y="30" width="530" height="295" fill="none" stroke="#444"/>
+<text x="335.0" y="368" text-anchor="middle">aspect ratio</text>
+<text transform="translate(16 177.5) rotate(-90)" text-anchor="middle">transmission W</text>
+<polyline points="70.0,46.2 143.3,56.2 240.2,74.1 313.6,90.9 386.9,109.9 460.2,130.4 503.1,143.9 533.5,153.8 557.1,160.7 600.0,173.7" fill="none" stroke="#1f77b4" stroke-width="2"/>
+<rect x="80" y="281" width="12" height="3" fill="#1f77b4"/><text x="98" y="287">slot s=0</text>
+<polyline points="70.0,58.5 143.3,74.0 240.2,100.7 313.6,124.5 386.9,150.4 460.2,177.8 503.1,194.4 533.5,207.5 557.1,215.7 600.0,233.7" fill="none" stroke="#d62728" stroke-width="2" stroke-dasharray="6 3"/>
+<rect x="80" y="297" width="12" height="3" fill="#d62728"/><text x="98" y="303">hole s=0</text>
+</svg><figcaption><b>Figure 4.1.</b> Transmission probability versus aspect ratio, non-reactive species (s = 0).</figcaption></figure>
+
+<p>Three observations:</p>
+<ol>
+<li><strong>Hole.</strong> For AR ≥ 20 the product W·AR sits at ≈ 1.27 ± 0.03, within a few per cent of the analytic limit of 4/3. Transmission falls as 1/AR.</li>
+<li><strong>Slot.</strong> W·AR <em>keeps growing</em>, from 3.1 at AR = 20 to 5.2 at AR = 150, and tracks ln(AR). A usable fit over 20 ≤ AR ≤ 150 is <strong>W ≈ (ln AR + 0.1)/AR</strong>.</li>
+<li><strong>Ratio.</strong> The slot-to-hole transmission ratio is 2.6 at AR = 20, 3.0 at AR = 40 and 3.6 at AR = 100, and 4.1 at AR = 150. It increases with depth, slowly.</li>
+</ol>
+<p>The practical meaning: a slit etch is <strong>less neutral-starved than a channel-hole etch of the same depth and width</strong>, the gap widening as the stack grows.</p>
+<h2>4.4 Results with wall consumption (s &gt; 0)</h2>
+<p>Etching neutrals are consumed on the walls, and the polymer precursors stick. Wall loss changes the picture sharply:</p>
+<table><thead><tr><th>AR</th><th>slot s=0.01</th><th>hole s=0.01</th><th>slot s=0.1</th><th>hole s=0.1</th></tr></thead><tbody><tr><td>1</td><td>0.6800</td><td>0.5048</td><td>0.6390</td><td>0.4361</td></tr><tr><td>2</td><td>0.5330</td><td>0.3388</td><td>0.4659</td><td>0.2375</td></tr><tr><td>5</td><td>0.3388</td><td>0.1583</td><td>0.2293</td><td>0.0509</td></tr><tr><td>10</td><td>0.2071</td><td>0.0613</td><td>0.0980</td><td>0.0070</td></tr><tr><td>20</td><td>0.1035</td><td>0.0116</td><td>0.0362</td><td>9.1e-04</td></tr><tr><td>40</td><td>0.0361</td><td>6.4e-04</td><td>0.0151</td><td>1.6e-04</td></tr><tr><td>60</td><td>0.0174</td><td>1.5e-04</td><td>0.0091</td><td>5.8e-05</td></tr><tr><td>80</td><td>0.0103</td><td>5.5e-05</td><td>0.0065</td><td>4.0e-05</td></tr><tr><td>100</td><td>0.0072</td><td>4.5e-05</td><td>0.0051</td><td>4.0e-05</td></tr><tr><td>150</td><td>0.0043</td><td>2.5e-05</td><td>0.0036</td><td>5.0e-06</td></tr></tbody></table>
+
+<figure><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 620 380" font-family="sans-serif" font-size="12">
+<rect width="620" height="380" fill="white"/>
+<text x="310.0" y="18" text-anchor="middle" font-weight="bold">Transmission with wall loss</text>
+<line x1="70" x2="600" y1="325.0" y2="325.0" stroke="#ddd"/><text x="64" y="329.0" text-anchor="end">1e-6</text>
+<line x1="70" x2="600" y1="275.83333333333337" y2="275.83333333333337" stroke="#ddd"/><text x="64" y="279.83333333333337" text-anchor="end">1e-5</text>
+<line x1="70" x2="600" y1="226.66666666666666" y2="226.66666666666666" stroke="#ddd"/><text x="64" y="230.66666666666666" text-anchor="end">1e-4</text>
+<line x1="70" x2="600" y1="177.5" y2="177.5" stroke="#ddd"/><text x="64" y="181.5" text-anchor="end">1e-3</text>
+<line x1="70" x2="600" y1="128.33333333333331" y2="128.33333333333331" stroke="#ddd"/><text x="64" y="132.33333333333331" text-anchor="end">1e-2</text>
+<line x1="70" x2="600" y1="79.16666666666666" y2="79.16666666666666" stroke="#ddd"/><text x="64" y="83.16666666666666" text-anchor="end">1e-1</text>
+<line x1="70" x2="600" y1="30.0" y2="30.0" stroke="#ddd"/><text x="64" y="34.0" text-anchor="end">1e0</text>
+<line x1="70.0" x2="70.0" y1="30" y2="325" stroke="#eee"/><text x="70.0" y="341" text-anchor="middle">1</text>
+<line x1="143.3176501849216" x2="143.3176501849216" y1="30" y2="325" stroke="#eee"/><text x="143.3176501849216" y="341" text-anchor="middle">2</text>
+<line x1="240.23831181549306" x2="240.23831181549306" y1="30" y2="325" stroke="#eee"/><text x="240.23831181549306" y="341" text-anchor="middle">5</text>
+<line x1="313.55596200041464" x2="313.55596200041464" y1="30" y2="325" stroke="#eee"/><text x="313.55596200041464" y="341" text-anchor="middle">10</text>
+<line x1="386.87361218533624" x2="386.87361218533624" y1="30" y2="325" stroke="#eee"/><text x="386.87361218533624" y="341" text-anchor="middle">20</text>
+<line x1="460.19126237025785" x2="460.19126237025785" y1="30" y2="325" stroke="#eee"/><text x="460.19126237025785" y="341" text-anchor="middle">40</text>
+<line x1="557.1119240008293" x2="557.1119240008293" y1="30" y2="325" stroke="#eee"/><text x="557.1119240008293" y="341" text-anchor="middle">100</text>
+<line x1="600.0" x2="600.0" y1="30" y2="325" stroke="#eee"/><text x="600.0" y="341" text-anchor="middle">150</text>
+<rect x="70" y="30" width="530" height="295" fill="none" stroke="#444"/>
+<text x="335.0" y="368" text-anchor="middle">aspect ratio</text>
+<text transform="translate(16 177.5) rotate(-90)" text-anchor="middle">transmission W</text>
+<polyline points="70.0,38.2 143.3,43.4 240.2,53.1 313.6,63.6 386.9,78.4 460.2,100.9 503.1,116.5 533.5,127.7 557.1,135.5 600.0,146.6" fill="none" stroke="#1f77b4" stroke-width="2"/>
+<rect x="80" y="249" width="12" height="3" fill="#1f77b4"/><text x="98" y="255">slot s=0.01</text>
+<polyline points="70.0,44.6 143.3,53.1 240.2,69.4 313.6,89.6 386.9,125.1 460.2,187.0 503.1,218.0 533.5,239.4 557.1,243.7 600.0,256.3" fill="none" stroke="#d62728" stroke-width="2" stroke-dasharray="6 3"/>
+<rect x="80" y="265" width="12" height="3" fill="#d62728"/><text x="98" y="271">hole s=0.01</text>
+<polyline points="70.0,39.6 143.3,46.3 240.2,61.4 313.6,79.6 386.9,100.9 460.2,119.5 503.1,130.3 533.5,137.6 557.1,142.9 600.0,150.0" fill="none" stroke="#2ca02c" stroke-width="2"/>
+<rect x="80" y="281" width="12" height="3" fill="#2ca02c"/><text x="98" y="287">slot s=0.1</text>
+<polyline points="70.0,47.7 143.3,60.7 240.2,93.6 313.6,136.0 386.9,179.5 460.2,216.6 503.1,238.5 533.5,246.2 557.1,246.2 600.0,290.6" fill="none" stroke="#9467bd" stroke-width="2" stroke-dasharray="6 3"/>
+<rect x="80" y="297" width="12" height="3" fill="#9467bd"/><text x="98" y="303">hole s=0.1</text>
+</svg><figcaption><b>Figure 4.2.</b> Transmission with wall loss. The slot floors at direct line of sight; the hole decays much faster. Hole values below about 1e-4 rest on only a handful of counted molecules and are noisy.</figcaption></figure>
+
+<ul>
+<li>With even s = 0.01, the hole's bottom flux at AR = 60 is ≈ 1.5 × 10⁻⁴ of the entering flux, compared with 1.7 × 10⁻² for the slot, a factor of <strong>over 100</strong>.</li>
+<li>At high s the hole's flux decays roughly exponentially with AR, while the slot's does not: it approaches a <strong>floor</strong> of direct line-of-sight transmission, on the order of 1/(2·AR) in these runs (0.5 % at AR = 100 for s = 0.1).</li>
+</ul>
+<p>The floor exists because particles entering almost parallel to the slot's long axis in the cross-section plane can traverse the entire depth without touching a wall. It is a real property of the geometry, but it is carried by a narrow cone of directions, and the molecules that arrive this way hit the bottom with an anisotropic angular distribution.</p>
+<h2>4.5 What this tells the process engineer</h2>
+<ul>
+<li><strong>Reactive radicals</strong> (atomic F, O) essentially cannot reach the bottom of a deep hole; in a slit a small fraction can, mostly by direct flight.</li>
+<li>Etching at the bottom is therefore driven largely by <strong>ions and by surface-diffused or recycled species</strong>, not by gas-phase neutral supply.</li>
+<li><strong>Polymer precursors</strong> are subject to the same transport law as etchants. If their sticking coefficient is high, the bottom is <em>starved</em> of polymer relative to the sidewall top, which is the mechanism by which the feature stays open (and by which the sidewall near the mouth is protected).</li>
+<li>Slit and hole etches <strong>cannot share a recipe</strong> without compensation: the neutral-to-ion balance at depth is materially different.</li>
+</ul>
+<h2>4.6 Caveats</h2>
+<p>The model is simplified: straight walls (no taper or bowing), constant s, diffuse re-emission without surface diffusion, no ion or charging effects, no gas-phase chemistry. It isolates geometry. Chapter 14 discusses how these effects are added in feature-scale simulators.</p></section><div class="part">Part II — Slit Etch Physics</div><section id="ch05"><h1>Chapter 5 — Ion Transport, Angular Distributions and Charging</h1>
+<h2>5.1 Ions as the delivery vehicle</h2>
+<p>Chapter 4 showed that neutrals reach the bottom of a deep feature in small and shrinking numbers. Ions are different: the sheath makes them nearly collimated. For an ion of energy E and transverse (thermal) energy kT_i, the angular half-width is roughly</p>
+<p>θ ≈ arctan √(kT_i / E).</p>
+<p>With kT_i of a few tenths of an eV and E of a few kV, θ is well below 1°. A slit of aspect ratio 60 subtends a half-angle of roughly arctan(1/60) ≈ 1°, so even this tiny spread matters: a fraction of the ions strike the sidewall instead of the bottom. Higher energy narrows the distribution and raises transmission, at the cost of mask loss.</p>
+<h2>5.2 Differential charging</h2>
+<p>An insulating stack charges. Electrons have an isotropic, thermal angular distribution and cannot follow the narrow channel to the bottom as ions do; they are collected at the top of the sidewalls. Positive ions arriving at the bottom therefore leave it with net positive charge, while the upper sidewall and mask are negative. The resulting electric field inside the feature has two effects:</p>
+<ul>
+<li>it <strong>decelerates and deflects ions</strong>, increasing sidewall strikes (leading to bowing and a reduced bottom flux);</li>
+<li>it can <strong>tilt</strong> the ion trajectories asymmetrically if the feature is asymmetric, because charge accumulates on one side more than the other.</li>
+</ul>
+<p>The effect is rooted in the same physics as <strong>notching</strong> (Hwang and Giapis, J. Vac. Sci. Technol. B 15, 70, 1997).</p>
+<h2>5.3 Why the slit charges differently from a hole</h2>
+<p>In a hole the sidewall surrounds the beam; field lines are roughly axisymmetric and the deflection is radially symmetric, so the charging effect mostly slows the etch. In a slit the two walls face each other across a <em>finite</em> width but extend indefinitely along y. Two things follow:</p>
+<ol>
+<li>Because there is no confinement along y, <strong>no field gradient exists along the slit axis</strong>; charging non-uniformity is a cross-section effect only.</li>
+<li>Any small left-right asymmetry in the surfaces (for example, one wall facing the array and the other facing a dummy region with a different density of filled channel pillars) produces a net lateral field, driving <strong>tilt</strong>.</li>
+</ol>
+<h2>5.4 Mitigation</h2>
+<p>Common levers, all of which have costs:</p>
+<table>
+<thead>
+<tr>
+<th>Lever</th>
+<th>Mechanism</th>
+<th>Cost</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Pulsed bias</strong></td>
+<td>Off-time allows electrons to neutralise the bottom</td>
+<td>Lower average ion flux, slower etch</td>
+</tr>
+<tr>
+<td><strong>Dual-frequency bias</strong></td>
+<td>Broader and higher-energy ion distribution</td>
+<td>Mask loss</td>
+</tr>
+<tr>
+<td><strong>Higher ion energy</strong></td>
+<td>Overcomes the retarding field</td>
+<td>Mask erosion, damage</td>
+</tr>
+<tr>
+<td><strong>Conductive coatings (carbon-rich polymer)</strong></td>
+<td>Bleeds off charge on sidewalls</td>
+<td>Polymer must be controlled</td>
+</tr>
+<tr>
+<td><strong>Lower temperature</strong></td>
+<td>Increases film conductivity and sticking of etch inhibitors in some chemistries</td>
+<td>Hardware complexity</td>
+</tr>
+</tbody>
+</table>
+<h2>5.5 Practical diagnostics</h2>
+<p>Evidence of charging-limited etching:</p>
+<ul>
+<li>bottom CD and etch rate decrease more rapidly than neutral-transport alone predicts;</li>
+<li>sidewall profile shows bowing just below the mask;</li>
+<li>tilt correlates with local pattern density, not with the tool;</li>
+<li>changing bias pulsing duty cycle changes profile without a change in chemistry.</li>
+</ul></section><section id="ch06"><h1>Chapter 6 — Chemistry for the Oxide–Nitride Stack</h1>
+<h2>6.1 Design requirements</h2>
+<p>The slit chemistry must satisfy four requirements simultaneously:</p>
+<ol>
+<li>Etch <strong>SiO₂ and Si₃N₄ at similar rates</strong>, so interfaces do not scallop.</li>
+<li><strong>Passivate the sidewall</strong> so that the lateral etch rate is a tiny fraction of the vertical one.</li>
+<li>Maintain an <strong>open feature</strong> at depth (no etch stop).</li>
+<li><strong>Preserve the mask</strong>, with selectivity high enough to survive the whole depth.</li>
+</ol>
+<h2>6.2 The fluorocarbon family</h2>
+<p>Fluorocarbon gases are classified by their F:C ratio, which controls the balance between etching and polymer deposition:</p>
+<table>
+<thead>
+<tr>
+<th>Gas</th>
+<th>F:C</th>
+<th>Behaviour</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>CF₄</td>
+<td>4</td>
+<td>Strongly etching, F-rich, little polymer</td>
+</tr>
+<tr>
+<td>C₄F₈</td>
+<td>2</td>
+<td>Strong polymer former, good oxide selectivity to Si</td>
+</tr>
+<tr>
+<td>C₄F₆</td>
+<td>1.5</td>
+<td>Heavier polymer, produces high selectivity to mask and Si</td>
+</tr>
+<tr>
+<td>CH₂F₂ / CHF₃</td>
+<td>1–1.5 plus H</td>
+<td>Hydrogen assists nitride etching and changes the polymer</td>
+</tr>
+<tr>
+<td>NF₃</td>
+<td>—</td>
+<td>F source, no carbon</td>
+</tr>
+</tbody>
+</table>
+<p>Hydrofluorocarbons (with H) matter for the nitride: hydrogen helps remove nitrogen as HCN or NH-containing products, so the nitride does not lag the oxide. A typical slit recipe blends a heavy polymer-former, a hydrofluorocarbon, oxygen, and argon.</p>
+<h2>6.3 The role of oxygen</h2>
+<p>Oxygen has two opposite effects:</p>
+<ul>
+<li><strong>Removes polymer</strong> (CO, CO₂ formation), preventing etch stop at depth and opening the bottom;</li>
+<li><strong>Attacks the carbon mask</strong> and increases lateral etch if overused.</li>
+</ul>
+<p>Because O atoms are consumed on the walls at near-unity sticking (Chapter 4's s &gt; 0 regime), they hardly reach the bottom. The effective O flux at depth comes from ions (O₂⁺, O⁺) and from the small line-of-sight fraction. This is why oxygen content must be adjusted as depth increases.</p>
+<h2>6.4 Sidewall passivation</h2>
+<p>The sidewall film is a fluorocarbon polymer on a thin modified (fluorinated) oxide/nitride layer. Its job is to absorb the grazing ion flux that would otherwise etch the sidewall. Characteristics of a good film:</p>
+<ul>
+<li>thin and <strong>conformal</strong> near the mask, thicker where the ion flux is higher;</li>
+<li><strong>carbon-rich</strong> (conductive enough to limit charging);</li>
+<li>removable in a later clean step.</li>
+</ul>
+<p>Where the passivation is thin the wall bows; where it is too thick the feature narrows and can pinch off.</p>
+<h2>6.5 The time-multiplexed (cyclic) approach</h2>
+<p>Cyclic processes alternate etching and deposition steps. Compared with a continuous mix, this gives independent control of each phase but introduces <strong>scalloping</strong> at the cycle period and reduces throughput. For the very deepest slits, short cycles, or ALE-like surface-limited steps, are a route to further profile control (Chapter 16).</p>
+<h2>6.6 Temperature</h2>
+<p>Surface temperature changes polymer sticking and the desorption of etch products. Lower temperature increases the thickness of the physisorbed reactant layer, raising the etch rate at a given ion flux and leaving a different sidewall film. Cryogenic dielectric etch is now a serious option for deep stacks (Chapter 10, Chapter 16).</p>
+<h2>6.7 Chemistry–transport coupling</h2>
+<p>A rule of thumb that follows from Chapter 4: the more reactive a species, the less of it reaches the bottom; therefore <strong>a species whose job is at the bottom should have a low sticking coefficient or be delivered as an ion</strong>, while one whose job is on the upper sidewall can be a high-sticking radical. Chemistry selection is largely an exercise in assigning each job to the species with the right sticking coefficient.</p></section><section id="ch07"><h1>Chapter 7 — Etch-Front Evolution, ARDE and Failure Modes</h1>
+<h2>7.1 Etch rate versus depth</h2>
+<p>For a slit, etch rate declines with depth. Three phases are typical:</p>
+<ol>
+<li><strong>Early, near-mask phase.</strong> Neutral supply is plentiful; rate is high and the profile responds to mask shape.</li>
+<li><strong>Middle phase.</strong> Neutral transport and ion deflection both matter; rate falls roughly as a power law in depth.</li>
+<li><strong>Deep phase.</strong> Ion-limited; the rate is small but fairly constant, and the profile is most sensitive to charging.</li>
+</ol>
+<p>Recipes are therefore <strong>stepped</strong>: parameters change at depth boundaries (more bias, less polymer former, more oxygen) so that the process stays in the intended regime throughout.</p>
+<h2>7.2 A catalogue of defects</h2>
+<table>
+<thead>
+<tr>
+<th>Defect</th>
+<th>Description</th>
+<th>Primary cause</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Bowing</strong></td>
+<td>Maximum CD below the mask, narrower above and below</td>
+<td>Ion deflection onto sidewall, thin passivation</td>
+</tr>
+<tr>
+<td><strong>Taper</strong></td>
+<td>Top wider than bottom</td>
+<td>Polymer thickness gradient</td>
+</tr>
+<tr>
+<td><strong>Necking / pinch-off</strong></td>
+<td>CD reduction partway down</td>
+<td>Excess polymer, etch-stop onset</td>
+</tr>
+<tr>
+<td><strong>Scalloping</strong></td>
+<td>Periodic roughness at oxide/nitride interfaces</td>
+<td>Rate mismatch between materials</td>
+</tr>
+<tr>
+<td><strong>Tilt</strong></td>
+<td>Slit axis not vertical</td>
+<td>Asymmetric charging or sheath non-uniformity at wafer edge</td>
+</tr>
+<tr>
+<td><strong>Twisting / wiggling</strong></td>
+<td>Lateral oscillation of the slit along its length</td>
+<td>Mechanical instability plus local charging (Chapter 8)</td>
+</tr>
+<tr>
+<td><strong>Under-etch</strong></td>
+<td>Slit does not reach the target</td>
+<td>Etch stop, ARDE</td>
+</tr>
+<tr>
+<td><strong>Punch-through</strong></td>
+<td>Slit passes the landing layer</td>
+<td>Over-etch, poor selectivity</td>
+</tr>
+</tbody>
+</table>
+<h2>7.3 Interplay of mechanisms</h2>
+<p>These defects do not occur independently. Reducing bowing by adding passivation increases the risk of pinch-off. Raising ion energy reduces etch-stop risk but increases mask erosion, which changes the mouth shape, which changes charging. Process development is multi-objective.</p>
+<h2>7.4 Edge-of-wafer effects</h2>
+<p>Near the wafer edge the plasma sheath bends, so the ion trajectory acquires a lateral component. Over a depth of several micrometres, a ≈ 1° tilt displaces the bottom by ≈ 0.1 µm, which is comparable to the slit width. Edge rings with tuned height and material, and edge-specific bias adjustments, address this.</p>
+<h2>7.5 Model-based insight</h2>
+<p>The simplest first-order predictor of etch rate at depth is a series combination of ion-limited rate R_ion(AR) and neutral-limited rate R_n(AR), with R_n scaling as the transmission probability computed in Chapter 4. This reproduces the qualitative trend and, importantly, explains why <em>slit</em> ARDE is milder than <em>hole</em> ARDE at the same aspect ratio.</p></section><section id="ch08"><h1>Chapter 8 — Profile Control: Taper, CD, Wiggling and Collapse</h1>
+<h2>8.1 Setting the target profile</h2>
+<p>The slit's cross-section is specified by top CD, bottom CD, and a maximum allowed bow. A common requirement is a bottom/top CD ratio above a threshold such as 0.6–0.8, and a bow that stays within a tolerance of a few nanometres. The number of tiers means the sidewall angle is typically only ~0.5°–1° from vertical.</p>
+<h2>8.2 Controlling taper and bowing</h2>
+<p>Taper is set by how the polymer thickness varies with depth. Practical levers:</p>
+<ul>
+<li><strong>Step-wise polymer-former reduction</strong> with depth, to keep the profile from pinching;</li>
+<li><strong>Bias ramp</strong>: increase ion energy as depth increases;</li>
+<li><strong>Temperature profile</strong> across the wafer and over time;</li>
+<li><strong>Mask shape</strong>: a straight, vertical mask opening gives less initial bowing.</li>
+</ul>
+<h2>8.3 The wiggling problem</h2>
+<p>Slit <strong>wiggling</strong> (also called <em>line wiggling</em> or <em>striation</em>) is a lateral, nearly periodic displacement of the slit along its length. Two explanations coexist and probably act together:</p>
+<ol>
+<li><strong>Mechanical.</strong> A tall, thin wall under film stress behaves like a slender column. Compressive stress in the stack can drive buckling. Where the wall is partially anchored by channel pillars, the unanchored segments buckle.</li>
+<li><strong>Plasma-driven.</strong> Small local asymmetries in sidewall polymer deposit or charge amplify through a feedback loop: a slight lean directs ions toward one sidewall, thinning its passivation, causing it to etch further and leaning more.</li>
+</ol>
+<p>Mitigations include stress management in the stack, lower-stress deposited films, mask designs that break symmetry, <strong>dummy channel structures</strong> near the slit to provide anchorage, and process settings that reduce charging.</p>
+<h2>8.4 Pattern collapse and the wet steps</h2>
+<p>After the slit is etched, the next steps expose the free-standing walls to wet chemistry and capillary forces. Collapse risk grows as the wall's slenderness rises. This is a strong reason to keep stack stress low and to dry carefully (low surface-tension drying) after the nitride removal.</p>
+<h2>8.5 A control strategy</h2>
+<p>An effective slit etch strategy has three layers:</p>
+<ol>
+<li><strong>Design for etchability</strong>: dummy channels, symmetric layout, dimensioned slits.</li>
+<li><strong>Recipe architecture</strong>: multi-step recipe with depth-dependent parameters.</li>
+<li><strong>Feedback</strong>: inline metrology (Chapter 13) drives chamber-to-chamber and lot-to-lot offsets.</li>
+</ol></section><div class="part">Part III — Process Integration</div><section id="ch09"><h1>Chapter 9 — Hard Mask Engineering</h1>
+<h2>9.1 The selectivity budget</h2>
+<p>The mask must survive the entire etch. Define the selectivity S as the ratio of stack etch rate to mask etch rate. Required mask thickness is</p>
+<p>t_mask = (stack depth / S) + margin.</p>
+<p>For a 10 µm stack and S = 10, the consumed mask is 1 µm, and a practical mask is substantially thicker than that to allow for faceting and non-uniformity. Thick masks cause their own problems: they raise the aspect ratio of the <em>overall</em> opening and increase pattern-transfer difficulties.</p>
+<h2>9.2 Material choices</h2>
+<table>
+<thead>
+<tr>
+<th>Mask</th>
+<th>Strengths</th>
+<th>Weaknesses</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Amorphous carbon (a-C)</strong></td>
+<td>High selectivity to oxide/nitride, strippable by O₂ ashing</td>
+<td>Stress, thickness uniformity, line wiggling in the mask itself</td>
+</tr>
+<tr>
+<td><strong>Doped a-C (B, W, other)</strong></td>
+<td>Higher etch resistance, lower thickness</td>
+<td>Strip complexity, residues</td>
+</tr>
+<tr>
+<td><strong>Poly-Si</strong></td>
+<td>Good selectivity in some chemistries</td>
+<td>Needs different strip, contamination sensitivity</td>
+</tr>
+<tr>
+<td><strong>Metal-containing masks</strong></td>
+<td>Very high selectivity</td>
+<td>Contamination control, stripping</td>
+</tr>
+</tbody>
+</table>
+<h2>9.3 Mask erosion and faceting</h2>
+<p>Ions striking the mask at oblique angles remove material faster at 45° than at normal incidence, which rounds the mask corner. A faceted mask enlarges the opening at the top, producing a <strong>funnel</strong> that later shows up as a wider upper CD, and changes how ions are focused into the feature. Faceting is reduced by lower ion energy during the early phase, higher mask selectivity, and carbon-rich polymer deposition on the mask.</p>
+<h2>9.4 Mask patterning</h2>
+<p>The slit is a line pattern, which is easier to print than a dense hole array, but the line is long, so <strong>line-edge roughness</strong> and <strong>line wiggling in the mask</strong> transfer into the stack. The mask opening etch is therefore a critical precursor step with its own CD and roughness specifications.</p>
+<h2>9.5 Mask strip</h2>
+<p>After slit etch, the carbon mask is stripped in an oxygen plasma. Because the slit is open to the stack and to the memory pillars, the strip must not oxidise exposed metal or consume the exposed poly. Passivation from the etch (fluorocarbon residue) is also removed here, with a following clean.</p></section><section id="ch10"><h1>Chapter 10 — Bias, Pulsing, Temperature and Reactor Design</h1>
+<h2>10.1 Why bias is the main lever</h2>
+<p>By Chapter 5, ion flux, energy and angular spread at the bottom of the slit largely determine etch rate and profile. The reactor lets you set these through bias power, bias frequency and plasma density.</p>
+<h2>10.2 Low-frequency, high-power bias</h2>
+<p>HAR dielectric tools deliver kilowatts of bias power, often at around 400 kHz–2 MHz and sometimes at two frequencies together. Consequences:</p>
+<ul>
+<li>ions cross the sheath in a fraction of an RF cycle, so energy is spread over a wide range;</li>
+<li>the high-energy part of the distribution has a narrow angle and reaches the bottom;</li>
+<li>heat load on the wafer is very large, so electrostatic chuck cooling is a design limit.</li>
+</ul>
+<h2>10.3 Pulsing</h2>
+<p>Pulsed plasmas (source, bias, or both) switch levels with duty cycles of tens of per cent at kilohertz rates. Their value:</p>
+<ul>
+<li><strong>Charge relief</strong> in the off-time lets electrons reach the feature bottom;</li>
+<li><strong>Radical-ion balance</strong> changes because radicals persist in the afterglow while ions decay;</li>
+<li><strong>Lower average heat load</strong> for the same peak ion energy.</li>
+</ul>
+<p>The cost is complexity: duty cycle, frequency and phase between source and bias become recipe parameters, with strong interactions.</p>
+<h2>10.4 Temperature</h2>
+<p>Wafer temperature is controlled through the electrostatic chuck. Near room temperature or modestly below, polymer deposition and oxide etch have a convenient balance. At cryogenic temperature (for example below –50 °C) the physisorbed layer of etch species thickens, the etch rate can increase markedly, and the sidewall passivation changes character. The benefits reported for deep stacks are higher etch rate at depth and better profile control; the challenges are hardware, condensation of by-products, and chamber wall conditioning.</p>
+<h2>10.5 Edge and uniformity hardware</h2>
+<ul>
+<li><strong>Focus ring / edge ring</strong> material and height tune the sheath near the edge and thus tilt.</li>
+<li><strong>Multi-zone chuck temperature</strong> and gas injection correct radial profiles.</li>
+<li><strong>Electrode design</strong> for uniform field across a 300 mm wafer.</li>
+</ul>
+<h2>10.6 Chamber conditioning</h2>
+<p>Fluorocarbon processes deposit on chamber walls. A chamber that has just been cleaned behaves differently from one with a seasoned, polymer-coated wall, because the wall's sticking coefficient to radicals changes. This is the same transport effect as in Chapter 4, at the reactor scale, and it explains the first-wafer effect.</p></section><section id="ch11"><h1>Chapter 11 — Slit Landing: Source Line and Bottom Contact</h1>
+<h2>11.1 What the slit must reach</h2>
+<p>At the bottom of the stack lies a conductive source-line structure, often doped polysilicon over a sacrificial or oxide region. The slit must expose it along its entire length so that later a contact (or source-line connection) can be formed, and so that gate-replacement chemistry can circulate.</p>
+<h2>11.2 The landing problem</h2>
+<p>The memory stack is several micrometres thick; the landing layer may be tens of nanometres thick. With a total across-wafer and along-slit etch-depth variation of a few per cent, the absolute depth variation is several hundred nanometres. The process must therefore <em>stop</em> using selectivity, not time.</p>
+<p>Selectivity at the landing layer is helped by:</p>
+<ul>
+<li>a <strong>fluorocarbon-rich chemistry</strong> in the final step that selectively deposits polymer on poly-Si (which lacks the oxygen needed to remove it) while oxide continues to etch;</li>
+<li>an <strong>etch-stop liner</strong> (nitride or other material) engineered into the stack;</li>
+<li><strong>endpoint detection</strong> by optical emission (CO or SiF signal drops when oxide is cleared) with a short, controlled over-etch.</li>
+</ul>
+<h2>11.3 Over-etch and its costs</h2>
+<p>Over-etch ensures that the slowest regions clear, but the fastest regions are punched through. Punch-through of the source layer produces contact defects and leakage. Conversely, an under-etched region leaves residual oxide at the bottom that blocks the contact. The window is set by the sum of non-uniformity (radial, along-slit, lot-to-lot).</p>
+<h2>11.4 Bottom profile</h2>
+<p>The bottom corner can show <strong>footing</strong> (lateral spreading at the dielectric–poly interface due to charge accumulation on the insulator) or <strong>notching</strong>. These are charging effects (Chapter 5) and are addressed by bias pulsing and by an optimised soft-landing step with reduced ion energy.</p>
+<h2>11.5 Post-etch residue</h2>
+<p>The bottom is covered with polymer and fluorinated residue. A subsequent clean (dry O₂/H₂-based or a wet process compatible with the exposed materials) removes it so the contact resistance is low and later epitaxial or deposited films adhere.</p></section><section id="ch12"><h1>Chapter 12 — Gate Replacement and Downstream Compatibility</h1>
+<h2>12.1 The slit as a process pipe</h2>
+<p>After the etch, the slit becomes the conduit through which the stack is chemically rebuilt. Understanding those steps explains many of the etch's specifications.</p>
+<h2>12.2 Nitride removal</h2>
+<p>Hot phosphoric acid removes the sacrificial nitride selectively over oxide. The etchant moves from the slit into the interior of the block, laterally, through the nitride layer's own thin gap as it opens. Etch-front depth is limited by diffusion of the acid in, and of dissolved products out. Slit <strong>profile</strong> matters: a narrow or tapered slit gives a slower supply to the deepest layers. Uniformity of the lateral removal from top to bottom of the stack is a direct function of the slit's CD at every depth.</p>
+<h2>12.3 Collapse risk revisited</h2>
+<p>With nitride gone, the oxide layers are thin plates held only at the channel pillars. Cleaning and drying must not stress them (Chapter 8).</p>
+<h2>12.4 Word-line formation</h2>
+<p>The cavities are lined with a high-k blocking dielectric and a barrier, then filled with tungsten by a CVD/ALD process through the slit. This transport is again free-molecular or near-free-molecular inside the narrow gaps, so conformality needs a surface-reaction-limited regime. The slit's CD and sidewall condition determine whether the precursor reaches deep layers. Tungsten <em>also</em> deposits on the slit sidewalls, and must later be removed by an <strong>etch-back</strong>, so the slit must be wide and straight enough to allow the removal chemistry to enter.</p>
+<h2>12.5 Slit fill</h2>
+<p>Finally the slit is filled with dielectric, sometimes with a conductive core to form the source-line contact. Bowing, narrowing, or sidewall roughness can trap <strong>voids</strong> (seams) in the fill. A void is not necessarily fatal but may open during later CMP or etch steps.</p>
+<h2>12.6 Feedback to the etch team</h2>
+<p>Interface specifications from downstream teams usually include: minimum bottom CD, maximum top CD, sidewall angle, roughness limit, and residual-polymer limit. Each of these is a direct input to the etch recipe's targets.</p></section><div class="part">Part IV — Measurement, Control and Outlook</div><section id="ch13"><h1>Chapter 13 — Metrology and Inspection</h1>
+<h2>13.1 The measurement challenge</h2>
+<p>The quantities that matter, bottom CD, bow depth, tilt and landing depth, are buried several micrometres below the surface. Top-down imaging sees only the mouth.</p>
+<h2>13.2 Techniques</h2>
+<table>
+<thead>
+<tr>
+<th>Technique</th>
+<th>What it gives</th>
+<th>Limitation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Top-down CD-SEM</strong></td>
+<td>Top CD, line-edge roughness</td>
+<td>Blind to depth</td>
+</tr>
+<tr>
+<td><strong>High-voltage SEM (HV-SEM) / BSE imaging</strong></td>
+<td>Bottom features through the stack by high-energy electrons</td>
+<td>Resolution falls with depth</td>
+</tr>
+<tr>
+<td><strong>Optical CD (scatterometry, OCD)</strong></td>
+<td>Averaged profile model: CD, depth, sidewall angle</td>
+<td>Needs a model; limited to periodic targets</td>
+</tr>
+<tr>
+<td><strong>X-ray scatterometry (CD-SAXS)</strong></td>
+<td>Shape and tilt of buried HAR structures, nondestructive</td>
+<td>Throughput, tool availability</td>
+</tr>
+<tr>
+<td><strong>Cross-section SEM / FIB</strong></td>
+<td>Direct profile image</td>
+<td>Destructive, slow, one location</td>
+</tr>
+<tr>
+<td><strong>TEM</strong></td>
+<td>Interface detail, sidewall film thickness</td>
+<td>Very slow, sample prep</td>
+</tr>
+<tr>
+<td><strong>Electrical test</strong></td>
+<td>Leakage and continuity at slit bottom</td>
+<td>Late feedback</td>
+</tr>
+</tbody>
+</table>
+<h2>13.3 Inline versus offline</h2>
+<p>Inline tools provide fast feedback but with model dependence. Offline tools give ground truth but are slow. A good control scheme uses cross-section data to calibrate inline models periodically.</p>
+<h2>13.4 Defect inspection</h2>
+<p>Systematic defects (a failed region of the wafer) and random defects (particles, residue plugs) are distinguished by pattern across the wafer. Optical inspection finds mask-level defects; bottom residues need HV-SEM or electrical test.</p>
+<h2>13.5 Metrology for wiggling</h2>
+<p>Wiggle amplitude and period are extracted by top-down imaging at the mouth, since the mask opening follows the bottom to some extent, plus rare cross-sections through a plane that cuts along the slit. Statistical metrics (RMS lateral displacement, spectral content along the slit) give a quantitative handle.</p></section><section id="ch14"><h1>Chapter 14 — Modelling and Simulation</h1>
+<h2>14.1 Model hierarchy</h2>
+<table>
+<thead>
+<tr>
+<th>Scale</th>
+<th>Question</th>
+<th>Method</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Reactor</strong></td>
+<td>Plasma density, species fluxes at the wafer</td>
+<td>Fluid or hybrid plasma models</td>
+</tr>
+<tr>
+<td><strong>Sheath</strong></td>
+<td>Ion energy and angle distribution</td>
+<td>Particle-in-cell, Monte Carlo</td>
+</tr>
+<tr>
+<td><strong>Feature</strong></td>
+<td>How the profile evolves</td>
+<td>Level-set / string / cell-based Monte Carlo</td>
+</tr>
+<tr>
+<td><strong>Atomistic</strong></td>
+<td>Sputter yields, surface reactions</td>
+<td>Molecular dynamics, DFT</td>
+</tr>
+</tbody>
+</table>
+<p>Each level feeds parameters to the next. The model in Chapter 4 is a deliberately minimal feature-scale transport model.</p>
+<h2>14.2 The transport code in this book</h2>
+<p><code>sim/transport_mc.py</code> has fewer than 150 lines and no dependencies beyond NumPy. It tracks particles in a vectorised loop: for each active particle, find the nearest wall or end, advance to it, test for absorption, and re-emit with a cosine-law direction. Appendix A describes the algorithm and Appendix E derives the analytic limits it should reproduce.</p>
+<h2>14.3 Validation</h2>
+<p>The first rule of simulation is to test against a known answer. Here the hole result at s = 0 reproduces Clausing's table within the statistical error (Chapter 4). A second check: the limiting behaviour W·AR → 4/3 for holes. For the slot the code reproduces the logarithmic growth of W·AR expected from the 2-D geometry.</p>
+<h2>14.4 Adding physics</h2>
+<p>A realistic feature simulator adds:</p>
+<ul>
+<li><strong>Surface reaction models</strong>: Langmuir-type coverage of etchant and polymer, with ion-assisted removal;</li>
+<li><strong>Angular and energy distributions</strong> for ions from sheath models;</li>
+<li><strong>Charging</strong>: a self-consistent electric field solved on the evolving geometry;</li>
+<li><strong>Surface diffusion</strong> of adsorbed species, which can transport etchant down the wall;</li>
+<li><strong>Profile evolution</strong> via level sets or Monte Carlo surface movement.</li>
+</ul>
+<h2>14.5 Calibration</h2>
+<p>Free parameters (sticking coefficients, yields) are calibrated against cross-section images at several depths and several recipes. Models are used to rank options and understand trends, rarely to predict absolute numbers.</p>
+<h2>14.6 Limits of model-based development</h2>
+<p>Models cannot capture every mechanism. Wiggling in particular depends on stress and plasma feedback, which is hard to model end-to-end. Treat models as a way to <strong>discard bad ideas quickly</strong> and to explain results, not as a replacement for experiments.</p></section><section id="ch15"><h1>Chapter 15 — Process Control, Defects and Yield</h1>
+<h2>15.1 Sources of variation</h2>
+<table>
+<thead>
+<tr>
+<th>Level</th>
+<th>Examples</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Within slit</td>
+<td>Along-slit bow variation, wiggling</td>
+</tr>
+<tr>
+<td>Within wafer</td>
+<td>Radial CD, tilt, depth</td>
+</tr>
+<tr>
+<td>Wafer-to-wafer</td>
+<td>Chamber wall state, temperature drift</td>
+</tr>
+<tr>
+<td>Chamber-to-chamber</td>
+<td>Hardware differences, consumables</td>
+</tr>
+<tr>
+<td>Lot-to-lot</td>
+<td>Incoming stack film thickness</td>
+</tr>
+</tbody>
+</table>
+<h2>15.2 Incoming variation</h2>
+<p>The etch sees the stack's actual thickness. A thicker-than-nominal stack needs more etch time and mask; endpoint and depth control must adapt. <strong>Feed-forward</strong> from deposition thickness metrology to etch time is standard.</p>
+<h2>15.3 Run-to-run control</h2>
+<p>Measured post-etch CD and depth update recipe offsets for later wafers (feedback). Multi-variable controllers use a model of how recipe knobs (bias, pressure, gas ratio, temperature) influence each profile metric.</p>
+<h2>15.4 Fault detection</h2>
+<p>Sensors (RF forward/reflected power, matching network positions, optical emission, chamber pressure) are monitored for signature drift. Optical emission is also an endpoint tool (Chapter 11).</p>
+<h2>15.5 Chamber matching</h2>
+<p>Matching chambers means matching their <em>outputs</em> (profile) rather than their settings, because hardware differs. Parameters such as bias coupling, wall state, and edge-ring wear are tuned to bring chambers within spec.</p>
+<h2>15.6 Typical yield detractors</h2>
+<ul>
+<li>Under-etch or bottom residue → open contact;</li>
+<li>Over-etch → leakage;</li>
+<li>Wiggling → slit-to-channel spacing violation or fill voids;</li>
+<li>Collapse in wet steps → catastrophic die loss;</li>
+<li>Particle plugging → localised failures.</li>
+</ul>
+<h2>15.7 Learning from failures</h2>
+<p>A good habit is to maintain a defect library with cross-section images and the parameter history for each failure mode, then link patterns in inline data to known failure signatures.</p></section><section id="ch16"><h1>Chapter 16 — The Road Ahead</h1>
+<h2>16.1 More layers</h2>
+<p>Each doubling of layer count roughly doubles the depth and keeps the width fixed, so the aspect ratio doubles. The transport results of Chapter 4 give a feel for the consequence: at AR 150 the hole delivers ~0.8 % of non-reactive neutral flux, and effectively none of a reactive radical, while a slit still passes about 3.5 % and has a direct-flight floor even with reactive loss.</p>
+<h2>16.2 Multi-deck (string-stacked) architectures</h2>
+<p>Rather than etch the whole stack in one go, build two or more decks, each etched separately and joined. The slit etch can then be done per deck (with the joint needing alignment) or once through the full stack. Per-deck etch relaxes aspect ratio at the price of an alignment and a joint with its own failure modes.</p>
+<h2>16.3 Wafer bonding (array and periphery on separate wafers)</h2>
+<p>Fabricating the CMOS periphery and the array on separate wafers and bonding them removes thermal and plasma-damage constraints on the periphery, and lets each be optimised. For the slit etch this relaxes the need to protect the underlying circuits, and changes the landing structure.</p>
+<h2>16.4 Cryogenic and advanced dielectric etch</h2>
+<p>Cryogenic wafer temperature, tailored pulsing, and new gas chemistries (including hydrogen-fluoride-containing mixtures) have been reported to raise the achievable depth and etch rate. They shift the balance of transport and chemistry described in Chapters 4 and 6.</p>
+<h2>16.5 Atomic-layer-style etching</h2>
+<p>Self-limited steps decouple the neutral supply from the ion step: an adsorption phase gives sufficient time for neutrals to diffuse to the bottom (long exposure, transport-limited but not rate-limiting), followed by a short ion-driven removal step. The time needed scales with 1/W, so it is the Chapter 4 transmission that sets the cycle time.</p>
+<h2>16.6 What stays hard</h2>
+<ul>
+<li>Mechanical stability of ever-taller walls;</li>
+<li>Charging in deeper insulating stacks;</li>
+<li>Metrology that sees the bottom;</li>
+<li>Cost and throughput of low-rate, deep etches.</li>
+</ul>
+<h2>16.7 Closing thoughts</h2>
+<p>The throughline of this book is that the slit is a transport problem first and a chemistry problem second. Compute the transport, assign each job in the process to a species that can actually get there, and most of the design choices follow.</p></section><section id="appA"><h1>Appendix A — The Monte Carlo Method</h1>
+<h2>A.1 Algorithm</h2>
+<p>For each of N test molecules:</p>
+<ol>
+<li><strong>Launch</strong> at a uniformly random point on the opening with a cosine-law direction: the polar angle θ from the inward normal satisfies cos θ = √u, with u uniform on (0, 1), and the azimuth φ is uniform on (0, 2π).</li>
+<li><strong>Propagate</strong> in a straight line to the nearest surface: a side wall, the top (escape) or the bottom (transmitted).</li>
+<li>If a wall is hit, <strong>absorb</strong> with probability s. Otherwise <strong>re-emit</strong> from the hit point with a fresh cosine-law direction measured from the wall's inward normal.</li>
+<li>Repeat until the molecule is absorbed, escapes through the top, or reaches the bottom.</li>
+</ol>
+<p>The transmission probability is W = N_bottom / N, with binomial standard error √(W(1 − W)/N).</p>
+<h2>A.2 Geometry specifics</h2>
+<p><strong>Slot.</strong> Translation invariance along y means only the (x, z) projection of the direction matters. The code samples the full 3-D cosine distribution and discards the y component; this preserves the correct angular weighting in the cross-section plane. Walls are x = 0 and x = 1; the bottom is z = AR.</p>
+<p><strong>Hole.</strong> Positions are (x, y, z) with the wall at x² + y² = ¼. The wall intersection solves a quadratic. The inward normal at the wall point defines the local frame for re-emission, with one tangent in the xy plane and the other along z.</p>
+<h2>A.3 Vectorisation</h2>
+<p>Each iteration advances <em>all</em> surviving molecules by one flight. The active set shrinks as molecules are lost, so total cost is proportional to the total number of wall collisions (roughly ∝ AR²·W⁻¹ in the worst case), manageable at AR = 150 with 2 × 10⁵ molecules.</p>
+<h2>A.4 Reproducing the results</h2>
+<pre><code>cd books/24-3d-nand-slit-etch/sim
+python3 transport_mc.py          # writes transport_results.csv (about 1.5 minutes)
+cd .. &amp;&amp; python3 build/build.py  # regenerates tables, figures, HTML and EPUB
+</code></pre>
+<p>The random generator is seeded (24), so results are repeatable on the same NumPy version. Sample sizes are 4 × 10⁵ for AR ≤ 60 and 2 × 10⁵ above that.</p>
+<h2>A.5 Validation</h2>
+<p>Hole transmissions at s = 0 against Clausing's tabulated values:</p>
+<table>
+<thead>
+<tr>
+<th>L/D</th>
+<th>Simulated</th>
+<th>Clausing</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0.5</td>
+<td>0.6715</td>
+<td>0.6720</td>
+</tr>
+<tr>
+<td>1</td>
+<td>0.5156</td>
+<td>0.5136</td>
+</tr>
+<tr>
+<td>2</td>
+<td>0.3563</td>
+<td>0.3589</td>
+</tr>
+<tr>
+<td>5</td>
+<td>0.1909</td>
+<td>0.1910</td>
+</tr>
+</tbody>
+</table>
+<p>The simulated values agree with the tabulated ones to within 0.0025 (under 1 % relative). Three of the four points are within about 2.5 standard errors (σ ≈ 0.0008 at N = 4 × 10⁵); the L/D = 2 point is about 3σ low in two independent runs (0.3563 and 0.3566, from the validation and the production sweep). We have not traced that small offset; it is below 1 % and does not affect any conclusion in the book. The tabulated values are quoted from memory of Clausing's classic table and should be re-checked against the primary source before any quantitative reuse.</p></section><section id="appB"><h1>Appendix B — Computed Transmission Tables</h1>
+<p>All values are the fraction of molecules entering the opening that reach the bottom. Uncertainties are binomial; the standard error is below 0.0008 for the s = 0 entries and smaller for small W. The complete data, with standard errors, are in <code>sim/transport_results.csv</code>.</p>
+<h2>B.1 Slot, transmission W by aspect ratio and sticking coefficient</h2>
+<table><thead><tr><th>AR</th><th>s=0.0</th><th>s=0.001</th><th>s=0.01</th><th>s=0.05</th><th>s=0.1</th><th>s=0.3</th></tr></thead><tbody><tr><td>1</td><td>0.6836</td><td>0.6836</td><td>0.6800</td><td>0.6619</td><td>0.6390</td><td>0.5684</td></tr><tr><td>2</td><td>0.5420</td><td>0.5406</td><td>0.5330</td><td>0.5019</td><td>0.4659</td><td>0.3673</td></tr><tr><td>5</td><td>0.3562</td><td>0.3539</td><td>0.3388</td><td>0.2778</td><td>0.2293</td><td>0.1478</td></tr><tr><td>10</td><td>0.2405</td><td>0.2357</td><td>0.2071</td><td>0.1349</td><td>0.0980</td><td>0.0638</td></tr><tr><td>20</td><td>0.1538</td><td>0.1469</td><td>0.1035</td><td>0.0484</td><td>0.0362</td><td>0.0277</td></tr><tr><td>40</td><td>0.0953</td><td>0.0829</td><td>0.0361</td><td>0.0167</td><td>0.0151</td><td>0.0130</td></tr><tr><td>60</td><td>0.0694</td><td>0.0531</td><td>0.0174</td><td>0.0102</td><td>0.0091</td><td>0.0086</td></tr><tr><td>80</td><td>0.0551</td><td>0.0365</td><td>0.0103</td><td>0.0073</td><td>0.0065</td><td>0.0068</td></tr><tr><td>100</td><td>0.0468</td><td>0.0264</td><td>0.0072</td><td>0.0056</td><td>0.0051</td><td>0.0049</td></tr><tr><td>150</td><td>0.0346</td><td>0.0124</td><td>0.0043</td><td>0.0037</td><td>0.0036</td><td>0.0032</td></tr></tbody></table>
+
+<h2>B.2 Hole, transmission W by aspect ratio and sticking coefficient</h2>
+<table><thead><tr><th>AR</th><th>s=0.0</th><th>s=0.001</th><th>s=0.01</th><th>s=0.05</th><th>s=0.1</th><th>s=0.3</th></tr></thead><tbody><tr><td>1</td><td>0.5134</td><td>0.5138</td><td>0.5048</td><td>0.4718</td><td>0.4361</td><td>0.3306</td></tr><tr><td>2</td><td>0.3566</td><td>0.3538</td><td>0.3388</td><td>0.2856</td><td>0.2375</td><td>0.1340</td></tr><tr><td>5</td><td>0.1912</td><td>0.1868</td><td>0.1583</td><td>0.0865</td><td>0.0509</td><td>0.0181</td></tr><tr><td>10</td><td>0.1094</td><td>0.1019</td><td>0.0613</td><td>0.0153</td><td>0.0070</td><td>0.0031</td></tr><tr><td>20</td><td>0.0597</td><td>0.0475</td><td>0.0116</td><td>0.0013</td><td>9.1e-04</td><td>7.5e-04</td></tr><tr><td>40</td><td>0.0314</td><td>0.0149</td><td>6.4e-04</td><td>2.0e-04</td><td>1.6e-04</td><td>1.9e-04</td></tr><tr><td>60</td><td>0.0213</td><td>0.0050</td><td>1.5e-04</td><td>8.2e-05</td><td>5.8e-05</td><td>7.3e-05</td></tr><tr><td>80</td><td>0.0157</td><td>0.0018</td><td>5.5e-05</td><td>2.0e-05</td><td>4.0e-05</td><td>3.5e-05</td></tr><tr><td>100</td><td>0.0129</td><td>6.2e-04</td><td>4.5e-05</td><td>5.0e-05</td><td>4.0e-05</td><td>1.5e-05</td></tr><tr><td>150</td><td>0.0085</td><td>9.5e-05</td><td>2.5e-05</td><td>1.0e-05</td><td>5.0e-06</td><td>1.5e-05</td></tr></tbody></table>
+
+<h2>B.3 Slot-to-hole ratio</h2>
+<table><thead><tr><th>AR</th><th>s=0.0</th><th>s=0.001</th><th>s=0.01</th><th>s=0.05</th><th>s=0.1</th><th>s=0.3</th></tr></thead><tbody><tr><td>1</td><td>1.3</td><td>1.3</td><td>1.3</td><td>1.4</td><td>1.5</td><td>1.7</td></tr><tr><td>2</td><td>1.5</td><td>1.5</td><td>1.6</td><td>1.8</td><td>2.0</td><td>2.7</td></tr><tr><td>5</td><td>1.9</td><td>1.9</td><td>2.1</td><td>3.2</td><td>4.5</td><td>8.1</td></tr><tr><td>10</td><td>2.2</td><td>2.3</td><td>3.4</td><td>8.8</td><td>14.0</td><td>20.4</td></tr><tr><td>20</td><td>2.6</td><td>3.1</td><td>8.9</td><td>37.7</td><td>39.8</td><td>37.2</td></tr><tr><td>40</td><td>3.0</td><td>5.6</td><td>56.5</td><td>83.4</td><td>94.6</td><td>67.8</td></tr><tr><td>60</td><td>3.3</td><td>10.5</td><td>116.3</td><td>124.0</td><td>158.8</td><td>119.2</td></tr><tr><td>80</td><td>3.5</td><td>20.8</td><td>187.3</td><td>364.2</td><td>161.9</td><td>193.7</td></tr><tr><td>100</td><td>3.6</td><td>42.6</td><td>159.2</td><td>111.4</td><td>126.5</td><td>324.3</td></tr><tr><td>150</td><td>4.1</td><td>130.2</td><td>170.0</td><td>368.0</td><td>725.0</td><td>213.7</td></tr></tbody></table>
+
+<p>Ratios grow without bound as s and AR increase, because the hole's flux decays exponentially while the slot's floors at the direct-flight value.</p></section><section id="appC"><h1>Appendix C — Constants, Units and Useful Conversions</h1>
+<h2>C.1 Constants</h2>
+<table>
+<thead>
+<tr>
+<th>Quantity</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Boltzmann constant k_B</td>
+<td>1.380649 × 10⁻²³ J/K = 8.617 × 10⁻⁵ eV/K</td>
+</tr>
+<tr>
+<td>Elementary charge e</td>
+<td>1.602177 × 10⁻¹⁹ C</td>
+</tr>
+<tr>
+<td>Electron-volt</td>
+<td>1.602177 × 10⁻¹⁹ J</td>
+</tr>
+<tr>
+<td>Room temperature 300 K</td>
+<td>k_BT ≈ 0.0259 eV</td>
+</tr>
+<tr>
+<td>Atomic mass unit</td>
+<td>1.66054 × 10⁻²⁷ kg</td>
+</tr>
+</tbody>
+</table>
+<h2>C.2 Pressure</h2>
+<p>1 Torr = 133.322 Pa; 1 mTorr = 0.1333 Pa.</p>
+<h2>C.3 Gas kinetics</h2>
+<p>Number density: n = P / (k_B T). At 10 mTorr and 300 K, n ≈ 3.2 × 10²⁰ m⁻³.</p>
+<p>Mean thermal speed: v̄ = √(8 k_B T / π m). For a fluorine atom (19 u) at 300 K, v̄ ≈ 5.8 × 10² m/s.</p>
+<p>Flux onto a surface: Γ = ¼ n v̄.</p>
+<p>Mean free path (hard sphere): λ = 1 / (√2 π d² n). For d ≈ 0.4 nm at 10 mTorr (n ≈ 3.2 × 10²⁰ m⁻³), λ ≈ 0.4 cm, four orders of magnitude larger than a 100 nm feature, which is why transport inside the feature is free-molecular.</p>
+<h2>C.4 Quick checks</h2>
+<ul>
+<li>Aspect ratio AR = depth / width (slot) or depth / diameter (hole).</li>
+<li>Sidewall half-angle subtended by a slot of aspect ratio AR: arctan(1/AR); for AR = 60 this is about 0.95°.</li>
+<li>Lateral displacement of the slit bottom for a tilt α over depth d: d·tan α; for 1° over 6 µm this is about 0.1 µm.</li>
+</ul>
+<h2>C.5 Layer count and depth</h2>
+<p>Depth ≈ (number of tiers) × (oxide + nitride thickness). With 60 nm per tier: 100 tiers ≈ 6 µm; 200 tiers ≈ 12 µm.</p></section><section id="appD"><h1>Appendix D — Representative Process Windows</h1>
+<blockquote>
+<p><strong>Illustrative values only.</strong> These ranges describe the <em>type</em> of conditions used in HAR dielectric etch and are not any manufacturer's recipe. They are provided to give a sense of scale and to support the worked problems in Appendix F.</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Typical range</th>
+<th>Primary effect</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Pressure</td>
+<td>5–50 mTorr</td>
+<td>Plasma density, ion angular spread (collisions in sheath)</td>
+</tr>
+<tr>
+<td>Source power</td>
+<td>1–5 kW</td>
+<td>Ion and radical flux</td>
+</tr>
+<tr>
+<td>Bias power (low frequency)</td>
+<td>3–20 kW</td>
+<td>Ion energy, mask loss, wafer heating</td>
+</tr>
+<tr>
+<td>Bias frequency</td>
+<td>0.4–2 MHz</td>
+<td>Width of ion energy distribution</td>
+</tr>
+<tr>
+<td>Pulsing duty cycle</td>
+<td>20–80 %</td>
+<td>Charge relief, radical/ion balance</td>
+</tr>
+<tr>
+<td>Wafer temperature</td>
+<td>–60 °C to +60 °C</td>
+<td>Polymer sticking, etch rate</td>
+</tr>
+<tr>
+<td>Polymer-forming gas (C₄F₆ / C₄F₈)</td>
+<td>10–60 sccm</td>
+<td>Sidewall passivation</td>
+</tr>
+<tr>
+<td>Hydrofluorocarbon (CH₂F₂ / CHF₃)</td>
+<td>10–80 sccm</td>
+<td>Nitride etch, polymer composition</td>
+</tr>
+<tr>
+<td>Oxygen</td>
+<td>10–100 sccm</td>
+<td>Polymer removal, mask attack</td>
+</tr>
+<tr>
+<td>Argon</td>
+<td>50–500 sccm</td>
+<td>Dilution, sputtering</td>
+</tr>
+<tr>
+<td>Mask selectivity (stack : a-C)</td>
+<td>5–15</td>
+<td>Mask thickness budget</td>
+</tr>
+<tr>
+<td>Etch time (full slit)</td>
+<td>5–30 min</td>
+<td>Throughput</td>
+</tr>
+</tbody>
+</table>
+<h2>D.1 Stepped recipe skeleton</h2>
+<table>
+<thead>
+<tr>
+<th>Step</th>
+<th>Depth range</th>
+<th>Intent</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1. Breakthrough</td>
+<td>Cap oxide</td>
+<td>Open through cap with mask-preserving chemistry</td>
+</tr>
+<tr>
+<td>2. Main etch</td>
+<td>0 – ⅔ of depth</td>
+<td>Fast etch, moderate polymer</td>
+</tr>
+<tr>
+<td>3. Deep etch</td>
+<td>⅔ – full depth</td>
+<td>Higher bias, less polymer, more O₂</td>
+</tr>
+<tr>
+<td>4. Soft landing</td>
+<td>Last 0.2–0.5 µm</td>
+<td>Reduced bias, selectivity to source layer</td>
+</tr>
+<tr>
+<td>5. Over-etch</td>
+<td>Fixed small time</td>
+<td>Clear slow regions</td>
+</tr>
+</tbody>
+</table></section><section id="appE"><h1>Appendix E — Short Derivations</h1>
+<h2>E.1 Cosine-law emission</h2>
+<p>Diffuse emission from a surface element has intensity proportional to cos θ per unit solid angle, so the probability of a polar angle between θ and θ + dθ is ∝ cos θ sin θ dθ. Integrating: P(≤ θ) = sin²θ. Setting P = 1 − u gives cos θ = √u, as used in Appendix A.</p>
+<h2>E.2 Flux onto a surface</h2>
+<p>For an isotropic gas of density n and mean speed v̄, the flux through a surface is Γ = ¼ n v̄. In a feature in free-molecular flow, the same relation holds locally at the opening, with n set by the gas above.</p>
+<h2>E.3 Direct-flight transmission through a slot</h2>
+<p>Consider a molecule entering a slot of width w and depth L. In the cross-section plane, only the in-plane angle ψ from the vertical matters. A molecule goes straight through without touching a wall if tan ψ &lt; w/L (approximately, for the most favourable entry points; averaged over entry position the allowed range is smaller by about a factor of two). Under cosine weighting the in-plane angular density near ψ = 0 is flat, so the fraction is of order (w/L)·(a constant of order ½ to 1). This is the <strong>direct-flight floor</strong>. In the s = 0.1 data it appears as W·AR ≈ 0.5.</p>
+<p>The same argument for a hole requires both in-plane components to be small, so the fraction scales as (D/L)², giving W ∼ 1/(4·AR²) = 2.5 × 10⁻⁵ at AR = 100, the same order as the 4 × 10⁻⁵ seen in the simulated hole data at s = 0.1.</p>
+<h2>E.4 Long-tube limits</h2>
+<p>For a long circular tube, the Clausing transmission tends to 4D/(3L), i.e. W·AR → 4/3. For an infinite slit the corresponding result carries a logarithm, W ≈ (ln AR + c)/AR. The fit c ≈ 0.1 over 20 ≤ AR ≤ 150 in Chapter 4 is empirical, not derived.</p>
+<h2>E.5 Series model for etch rate</h2>
+<p>If an ion-driven rate R_ion and a neutral-limited rate R_n act in series (each necessary), the net rate is R = (R_ion⁻¹ + R_n⁻¹)⁻¹. With R_n = R₀·W(AR) this gives the simplest ARDE curve: R → R_n at large AR where W is small, and → R_ion at small AR.</p></section><section id="appF"><h1>Appendix F — Worked Problems</h1>
+<p><strong>F.1 Mean free path.</strong> At 20 mTorr and 300 K with d = 0.4 nm, what is λ, and how does it compare with a 5 µm deep feature?</p>
+<p><em>Solution.</em> n = P/(k_BT) = 2.667 Pa / 4.14 × 10⁻²¹ J = 6.4 × 10²⁰ m⁻³. λ = 1/(√2 π d² n) = 1/(4.443 × 1.6 × 10⁻¹⁹ × 6.4 × 10²⁰) ≈ 2.2 × 10⁻³ m = 0.22 cm. This is 440 times the 5 µm depth, so collisions inside the feature are negligible.</p>
+<p><strong>F.2 Stack depth.</strong> A stack has 176 tiers, each 28 nm oxide + 32 nm nitride. How deep is it, and what is the slit aspect ratio for a 110 nm average width?</p>
+<p><em>Solution.</em> Depth = 176 × 60 nm = 10.56 µm. AR = 10 560 / 110 ≈ 96.</p>
+<p><strong>F.3 Neutral flux at the bottom.</strong> Using Appendix B, estimate the relative flux of a non-reactive neutral at the bottom of that slit and of a hole of the same depth and diameter.</p>
+<p><em>Solution.</em> At AR ≈ 100 and s = 0, W_slot = 0.047 and W_hole = 0.013. The slit delivers about 3.6 times the flux.</p>
+<p><strong>F.4 A reactive radical.</strong> The same, for a radical with s = 0.1.</p>
+<p><em>Solution.</em> W_slot ≈ 5 × 10⁻³ and W_hole ≈ 4 × 10⁻⁵ (Appendix B). The ratio is about 100. In the hole the radical is effectively absent at the bottom.</p>
+<p><strong>F.5 Ion angle.</strong> An ion with 3 keV energy and 0.3 eV transverse energy: half-angle? What fraction of a slit of AR 96 does it subtend?</p>
+<p><em>Solution.</em> θ ≈ arctan √(0.3/3000) = arctan(0.01) = 0.57°. The slit subtends arctan(1/96) = 0.60°. The ion angle is comparable to the slit angle, so a substantial fraction strikes the sidewall: tight angular control matters.</p>
+<p><strong>F.6 Tilt.</strong> An edge-wafer tilt of 0.5° over 10 µm depth: bottom displacement?</p>
+<p><em>Solution.</em> 10 µm × tan(0.5°) = 0.087 µm = 87 nm, comparable to the slit width itself.</p>
+<p><strong>F.7 Mask budget.</strong> Stack depth 10.5 µm, selectivity 8, margin 30 %. Mask thickness?</p>
+<p><em>Solution.</em> Consumed = 10.5/8 = 1.31 µm; with margin 1.31 × 1.3 = 1.7 µm.</p>
+<p><strong>F.8 Series model.</strong> R_ion = 300 nm/min, R₀ = 800 nm/min, AR = 100 slot (W = 0.047). Net rate?</p>
+<p><em>Solution.</em> R_n = 800 × 0.047 = 37.6 nm/min. R = 1/(1/300 + 1/37.6) = 33.4 nm/min. (This is a toy illustration; real neutral-limited behaviour depends on how much of the etch is neutral-limited.)</p></section><section id="appG"><h1>Appendix G — Further Reading</h1>
+<p>The following are foundational references the book builds on. Citation details are given as the author remembers them; verify against the original before citing formally.</p>
+<ul>
+<li>M. Knudsen, "Die Gesetze der Molekularströmung und der inneren Reibungsströmung der Gase durch Röhren," <em>Annalen der Physik</em> 28, 75 (1909). Origin of free-molecular flow in tubes.</li>
+<li>P. Clausing, "Über die Strömung sehr verdünnter Gase durch Röhren von beliebiger Länge," <em>Annalen der Physik</em> 12, 961 (1932). Transmission probability of tubes.</li>
+<li>J. W. Coburn and H. F. Winters, "Ion- and electron-assisted gas-surface chemistry — an important effect in plasma etching," <em>Journal of Applied Physics</em> 50, 3189 (1979).</li>
+<li>R. A. Gottscho, C. W. Jurgensen and D. J. Vitkavage, "Microscopic uniformity in plasma etching," <em>Journal of Vacuum Science &amp; Technology B</em> 10, 2133 (1992). ARDE mechanisms.</li>
+<li>G. S. Hwang and K. P. Giapis, "On the origin of the notching effect during etching in uniform high density plasmas," <em>Journal of Vacuum Science &amp; Technology B</em> 15, 70 (1997).</li>
+<li>H. Tanaka et al., "Bit Cost Scalable Technology with Punch and Plug Process for Ultra High Density Flash Memory," <em>Symposium on VLSI Technology</em> (2007). BiCS.</li>
+<li>M. A. Lieberman and A. J. Lichtenberg, <em>Principles of Plasma Discharges and Materials Processing</em>, 2nd ed., Wiley (2005).</li>
+<li>D. B. Graves and others on feature-scale plasma–surface modelling; see the review literature in <em>Journal of Vacuum Science &amp; Technology A</em> and <em>Journal of Physics D</em>.</li>
+</ul>
+<p><em>Note.</em> Process-specific claims in Chapters 5–16 describe widely discussed mechanisms in the field; they are not drawn from a single source, and numbers are illustrative (see Chapter 1).</p></section><section id="glossary"><h1>Glossary</h1>
+<p><strong>Aspect ratio (AR)</strong> — Feature depth divided by its width (slot) or diameter (hole).</p>
+<p><strong>ARDE</strong> — Aspect-ratio-dependent etching: etch rate that decreases with depth or aspect ratio.</p>
+<p><strong>Bowing</strong> — Outward bulge of a sidewall, usually just below the mask.</p>
+<p><strong>Block</strong> — The erase unit of a NAND array, bounded by slits.</p>
+<p><strong>Channel hole</strong> — Vertical hole through the stack that holds the memory-cell string.</p>
+<p><strong>Charging (differential charging)</strong> — Build-up of charge on insulating surfaces inside a feature that deflects incoming ions.</p>
+<p><strong>Clausing factor</strong> — Transmission probability of a tube in free-molecular flow.</p>
+<p><strong>Cosine law</strong> — Angular distribution, ∝ cos θ, of diffusely emitted or reflected molecules.</p>
+<p><strong>Cryogenic etch</strong> — Etching with the wafer cooled well below room temperature.</p>
+<p><strong>Dummy channel</strong> — Non-functional channel structure that gives mechanical support near a slit.</p>
+<p><strong>Free-molecular (Knudsen) flow</strong> — Gas flow in which molecules collide with walls far more often than with each other.</p>
+<p><strong>Gate replacement</strong> — Flow in which sacrificial nitride is removed and replaced with metal word lines.</p>
+<p><strong>Hard mask</strong> — Patterned film, often amorphous carbon, that withstands the etch.</p>
+<p><strong>HAR</strong> — High aspect ratio.</p>
+<p><strong>Ion-neutral synergy</strong> — Enhanced etching when ions and reactive neutrals act together.</p>
+<p><strong>Knudsen number</strong> — Ratio of molecular mean free path to feature size.</p>
+<p><strong>Landing</strong> — Stopping the etch on, or at a controlled depth into, the target layer.</p>
+<p><strong>Monte Carlo (MC)</strong> — Simulation by random sampling of particle histories.</p>
+<p><strong>Notching</strong> — Lateral etch at the bottom of a feature, at an insulator interface.</p>
+<p><strong>Pulsed plasma</strong> — Plasma whose power is modulated in time.</p>
+<p><strong>Scalloping</strong> — Periodic sidewall ripples, e.g. from alternating materials or cyclic processing.</p>
+<p><strong>Sheath</strong> — Boundary layer between plasma and surface in which ions are accelerated.</p>
+<p><strong>Slit</strong> — Long narrow trench through the whole stack, providing access for gate replacement and separating blocks.</p>
+<p><strong>Source line</strong> — Conductive layer at the bottom of the array contacted through the slit.</p>
+<p><strong>Sticking coefficient (s)</strong> — Probability that a molecule is lost on a wall collision.</p>
+<p><strong>Tier</strong> — One oxide–nitride pair of the stack.</p>
+<p><strong>Tilt</strong> — Departure of the feature axis from vertical.</p>
+<p><strong>Transmission probability (W)</strong> — Fraction of molecules entering a feature that reach its bottom.</p>
+<p><strong>Wiggling</strong> — Lateral oscillation of a slit along its length.</p></section><section id="index"><h1>Index</h1>
+<p><strong>Amorphous carbon</strong> — <a href="#ch09">9</a>, <a href="#appD">App. D</a></p>
+<p><strong>ARDE</strong> — <a href="#ch01">1</a>, <a href="#ch03">3</a>, <a href="#ch07">7</a>, <a href="#appE">App. E</a>, <a href="#appG">App. G</a></p>
+<p><strong>Aspect ratio</strong> — <a href="#ch01">1</a>, <a href="#ch05">5</a>, <a href="#ch07">7</a>, <a href="#ch09">9</a>, <a href="#ch16">16</a>, <a href="#appB">App. B</a>, <a href="#appC">App. C</a>, <a href="#appF">App. F</a></p>
+<p><strong>Bias, low-frequency</strong> — <a href="#ch03">3</a>, <a href="#ch10">10</a>, <a href="#appD">App. D</a></p>
+<p><strong>Block</strong> — <a href="#ch01">1</a>, <a href="#ch02">2</a>, <a href="#ch11">11</a>, <a href="#ch12">12</a></p>
+<p><strong>Bowing</strong> — <a href="#ch02">2</a>, <a href="#ch04">4</a>, <a href="#ch05">5</a>, <a href="#ch07">7</a>, <a href="#ch08">8</a>, <a href="#ch12">12</a></p>
+<p><strong>Channel hole</strong> — <a href="#ch01">1</a>, <a href="#ch02">2</a></p>
+<p><strong>Charging</strong> — <a href="#ch02">2</a>, <a href="#ch03">3</a>, <a href="#ch04">4</a>, <a href="#ch05">5</a>, <a href="#ch06">6</a>, <a href="#ch07">7</a>, <a href="#ch08">8</a>, <a href="#ch11">11</a>, <a href="#ch14">14</a>, <a href="#ch16">16</a></p>
+<p><strong>Clausing factor</strong> — <a href="#ch04">4</a>, <a href="#ch14">14</a>, <a href="#appA">App. A</a>, <a href="#appE">App. E</a>, <a href="#appG">App. G</a></p>
+<p><strong>Cosine law</strong> — <a href="#ch03">3</a>, <a href="#ch04">4</a>, <a href="#ch14">14</a>, <a href="#appA">App. A</a>, <a href="#appE">App. E</a></p>
+<p><strong>Cryogenic etch</strong> — <a href="#ch06">6</a>, <a href="#ch10">10</a>, <a href="#ch16">16</a></p>
+<p><strong>Dummy channel</strong> — <a href="#ch08">8</a></p>
+<p><strong>Endpoint detection</strong> — <a href="#ch11">11</a>, <a href="#ch15">15</a></p>
+<p><strong>Etch stop</strong> — <a href="#ch03">3</a>, <a href="#ch06">6</a>, <a href="#ch07">7</a>, <a href="#ch11">11</a></p>
+<p><strong>Fluorocarbon</strong> — <a href="#ch03">3</a>, <a href="#ch06">6</a>, <a href="#ch09">9</a>, <a href="#ch10">10</a>, <a href="#ch11">11</a>, <a href="#appD">App. D</a></p>
+<p><strong>Free-molecular flow</strong> — <a href="#ch01">1</a>, <a href="#ch03">3</a>, <a href="#ch04">4</a>, <a href="#ch12">12</a>, <a href="#appC">App. C</a>, <a href="#appE">App. E</a>, <a href="#appG">App. G</a></p>
+<p><strong>Gate replacement</strong> — <a href="#ch01">1</a>, <a href="#ch02">2</a>, <a href="#ch11">11</a>, <a href="#ch12">12</a></p>
+<p><strong>Hard mask</strong> — <a href="#ch02">2</a>, <a href="#ch09">9</a></p>
+<p><strong>Hydrofluorocarbon</strong> — <a href="#ch06">6</a>, <a href="#appD">App. D</a></p>
+<p><strong>Ion angular distribution</strong> — <a href="#ch03">3</a>, <a href="#ch04">4</a>, <a href="#ch05">5</a>, <a href="#ch10">10</a>, <a href="#appD">App. D</a></p>
+<p><strong>Ion energy</strong> — <a href="#ch03">3</a>, <a href="#ch05">5</a>, <a href="#ch07">7</a>, <a href="#ch08">8</a>, <a href="#ch09">9</a>, <a href="#ch10">10</a>, <a href="#ch11">11</a>, <a href="#ch14">14</a>, <a href="#appD">App. D</a></p>
+<p><strong>Landing</strong> — <a href="#ch01">1</a>, <a href="#ch02">2</a>, <a href="#ch07">7</a>, <a href="#ch11">11</a>, <a href="#ch13">13</a>, <a href="#ch16">16</a>, <a href="#appD">App. D</a></p>
+<p><strong>Mask selectivity</strong> — <a href="#ch02">2</a>, <a href="#ch03">3</a>, <a href="#ch06">6</a>, <a href="#ch07">7</a>, <a href="#ch09">9</a>, <a href="#ch11">11</a>, <a href="#appD">App. D</a>, <a href="#appF">App. F</a></p>
+<p><strong>Mean free path</strong> — <a href="#ch04">4</a>, <a href="#appC">App. C</a>, <a href="#appF">App. F</a></p>
+<p><strong>Metrology</strong> — <a href="#ch08">8</a>, <a href="#ch13">13</a>, <a href="#ch15">15</a>, <a href="#ch16">16</a></p>
+<p><strong>Monte Carlo</strong> — <a href="#ch01">1</a>, <a href="#ch04">4</a>, <a href="#ch14">14</a>, <a href="#appA">App. A</a></p>
+<p><strong>Neutral transport</strong> — <a href="#ch01">1</a>, <a href="#ch04">4</a>, <a href="#ch07">7</a>, <a href="#appA">App. A</a>, <a href="#appG">App. G</a></p>
+<p><strong>Nitride removal</strong> — <a href="#ch01">1</a>, <a href="#ch02">2</a>, <a href="#ch08">8</a>, <a href="#ch12">12</a></p>
+<p><strong>Notching</strong> — <a href="#ch05">5</a>, <a href="#ch11">11</a>, <a href="#appG">App. G</a></p>
+<p><strong>Oxygen</strong> — <a href="#ch03">3</a>, <a href="#ch06">6</a>, <a href="#ch07">7</a>, <a href="#ch09">9</a>, <a href="#ch11">11</a>, <a href="#appD">App. D</a></p>
+<p><strong>Passivation</strong> — <a href="#ch02">2</a>, <a href="#ch06">6</a>, <a href="#ch07">7</a>, <a href="#ch08">8</a>, <a href="#ch09">9</a>, <a href="#ch10">10</a>, <a href="#appD">App. D</a></p>
+<p><strong>Polymer</strong> — <a href="#ch03">3</a>, <a href="#ch04">4</a>, <a href="#ch05">5</a>, <a href="#ch06">6</a>, <a href="#ch07">7</a>, <a href="#ch08">8</a>, <a href="#ch09">9</a>, <a href="#ch10">10</a>, <a href="#ch11">11</a>, <a href="#ch12">12</a>, <a href="#ch14">14</a>, <a href="#appD">App. D</a></p>
+<p><strong>Pulsed plasma</strong> — <a href="#ch03">3</a>, <a href="#ch05">5</a>, <a href="#ch10">10</a>, <a href="#ch11">11</a>, <a href="#ch16">16</a>, <a href="#appD">App. D</a></p>
+<p><strong>Scalloping</strong> — <a href="#ch03">3</a>, <a href="#ch06">6</a>, <a href="#ch07">7</a></p>
+<p><strong>Sheath</strong> — <a href="#ch03">3</a>, <a href="#ch05">5</a>, <a href="#ch07">7</a>, <a href="#ch10">10</a>, <a href="#ch14">14</a>, <a href="#appD">App. D</a></p>
+<p><strong>Source line</strong> — <a href="#ch01">1</a>, <a href="#ch02">2</a>, <a href="#ch11">11</a>, <a href="#ch12">12</a></p>
+<p><strong>Sticking coefficient</strong> — <a href="#ch04">4</a>, <a href="#ch05">5</a>, <a href="#ch06">6</a>, <a href="#ch10">10</a>, <a href="#ch14">14</a>, <a href="#appB">App. B</a>, <a href="#appD">App. D</a></p>
+<p><strong>Tier</strong> — <a href="#ch02">2</a>, <a href="#ch08">8</a>, <a href="#appC">App. C</a>, <a href="#appF">App. F</a></p>
+<p><strong>Tilt</strong> — <a href="#ch02">2</a>, <a href="#ch05">5</a>, <a href="#ch07">7</a>, <a href="#ch10">10</a>, <a href="#ch13">13</a>, <a href="#ch15">15</a>, <a href="#appC">App. C</a>, <a href="#appF">App. F</a></p>
+<p><strong>Time-multiplexed etch</strong> — <a href="#ch06">6</a></p>
+<p><strong>Tungsten</strong> — <a href="#ch01">1</a>, <a href="#ch02">2</a>, <a href="#ch12">12</a></p>
+<p><strong>Wafer bonding</strong> — <a href="#ch02">2</a>, <a href="#ch16">16</a></p>
+<p><strong>Wiggling</strong> — <a href="#ch01">1</a>, <a href="#ch02">2</a>, <a href="#ch07">7</a>, <a href="#ch08">8</a>, <a href="#ch09">9</a>, <a href="#ch13">13</a>, <a href="#ch14">14</a>, <a href="#ch15">15</a></p>
+<p><strong>X-ray metrology</strong> — <a href="#ch13">13</a></p></section></body></html>
